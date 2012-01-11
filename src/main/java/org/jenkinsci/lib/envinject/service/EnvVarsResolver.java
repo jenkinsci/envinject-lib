@@ -2,15 +2,14 @@ package org.jenkinsci.lib.envinject.service;
 
 import hudson.EnvVars;
 import hudson.FilePath;
-import hudson.Plugin;
 import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Hudson;
 import hudson.model.Node;
 import hudson.model.Run;
 import hudson.remoting.Callable;
+import org.jenkinsci.lib.envinject.EnvInjectAction;
 import org.jenkinsci.lib.envinject.EnvInjectException;
-import org.jenkinsci.plugins.envinject.EnvInjectAction;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -24,7 +23,8 @@ public class EnvVarsResolver implements Serializable {
     public Map<String, String> getPollingEnvVars(AbstractProject project, Node node) throws EnvInjectException {
         Run lastBuild = project.getLastBuild();
         if (lastBuild != null) {
-            if (isEnvInjectPluginActivated()) {
+            EnvInjectDetector detector = new EnvInjectDetector();
+            if (detector.isEnvInjectPluginActivated()) {
                 EnvInjectAction envInjectAction = lastBuild.getAction(EnvInjectAction.class);
                 if (envInjectAction != null) {
                     return envInjectAction.getEnvMap();
@@ -32,11 +32,6 @@ public class EnvVarsResolver implements Serializable {
             }
         }
         return getDefaultEnvVarsJob(project, node);
-    }
-
-    private boolean isEnvInjectPluginActivated() {
-        Plugin envInjectPlugin = Hudson.getInstance().getPlugin("envinject");
-        return envInjectPlugin != null;
     }
 
     private Map<String, String> getDefaultEnvVarsJob(AbstractProject project, Node node) throws EnvInjectException {
