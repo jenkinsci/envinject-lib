@@ -1,5 +1,6 @@
 package org.jenkinsci.lib.envinject;
 
+import com.sun.xml.internal.ws.server.UnsupportedMediaException;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import org.apache.commons.collections.map.UnmodifiableMap;
@@ -13,7 +14,7 @@ import java.util.Map;
 /**
  * @author Gregory Boissinot
  */
-public abstract class EnvInjectAction implements Action, StaplerProxy {
+public class EnvInjectAction implements Action, StaplerProxy {
 
     public static final String URL_NAME = "injectedEnvVars";
 
@@ -57,14 +58,18 @@ public abstract class EnvInjectAction implements Action, StaplerProxy {
     private Object writeReplace() throws ObjectStreamException {
         try {
             EnvInjectSaveable dao = new EnvInjectSaveable();
+
             if (rootDir == null) {
                 dao.saveEnvironment(build.getRootDir(), envMap);
+                return this;
             }
+
             dao.saveEnvironment(rootDir, envMap);
+            return this;
         } catch (EnvInjectException e) {
-            e.printStackTrace();
+            throw new ObjectStreamException(e.getMessage()) {
+            };
         }
-        return this;
     }
 
     @SuppressWarnings("unused")
@@ -94,4 +99,7 @@ public abstract class EnvInjectAction implements Action, StaplerProxy {
     }
 
 
+    public Object getTarget() {
+        throw new UnsupportedMediaException();
+    }
 }
