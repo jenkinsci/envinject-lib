@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public abstract class EnvInjectAction implements Action, StaplerProxy {
 
-    public static String URL_NAME = "injectedEnvVars";
+    public static final String URL_NAME = "injectedEnvVars";
 
     protected transient Map<String, String> envMap;
 
@@ -92,4 +92,6 @@ public abstract class EnvInjectAction implements Action, StaplerProxy {
 
         return this;
     }
+
+
 }

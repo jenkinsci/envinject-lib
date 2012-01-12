@@ -16,10 +16,15 @@ public class EnvInjectSaveable {
     private static final String ENVINJECT_TXT_FILENAME = "injectedEnvVars.txt";
     private static final String TOKEN = "=";
 
-    public Map<String, String> getEnvironment(File rootDir) throws EnvInjectException {
+    public Map<String, String> getEnvironment(File envInjectBaseDir) throws EnvInjectException {
+
+        if (envInjectBaseDir == null) {
+            throw new IllegalArgumentException("A base directory of the envinject file must be set.");
+        }
+
         FileReader fileReader = null;
         try {
-            File f = new File(rootDir, ENVINJECT_TXT_FILENAME);
+            File f = new File(envInjectBaseDir, ENVINJECT_TXT_FILENAME);
             if (!f.exists()) {
                 return null;
             }

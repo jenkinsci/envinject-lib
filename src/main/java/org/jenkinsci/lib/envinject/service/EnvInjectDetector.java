@@ -12,6 +12,11 @@ import org.jenkinsci.lib.envinject.EnvInjectAction;
 public class EnvInjectDetector {
 
     public boolean isEnvInjectActivated(AbstractBuild build) {
+
+        if (build == null) {
+            throw new IllegalArgumentException("A build object must be set.");
+        }
+
         if (build instanceof MatrixRun) {
             return (((MatrixRun) build).getParentBuild().getAction(EnvInjectAction.class)) != null;
         } else {

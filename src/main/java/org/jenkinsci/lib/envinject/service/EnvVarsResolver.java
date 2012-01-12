@@ -3,16 +3,16 @@ package org.jenkinsci.lib.envinject.service;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Util;
-import hudson.model.AbstractProject;
-import hudson.model.Hudson;
-import hudson.model.Node;
-import hudson.model.Run;
+import hudson.model.*;
 import hudson.remoting.Callable;
 import org.jenkinsci.lib.envinject.EnvInjectAction;
 import org.jenkinsci.lib.envinject.EnvInjectException;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,28 +21,51 @@ import java.util.Map;
 public class EnvVarsResolver implements Serializable {
 
     public Map<String, String> getPollingEnvVars(AbstractProject project, Node node) throws EnvInjectException {
+
+        if (project == null) {
+            throw new IllegalArgumentException("A project object must be set.");
+        }
+
+        if (node == null) {
+            throw new IllegalArgumentException("A node must be set.");
+        }
+
         Run lastBuild = project.getLastBuild();
         if (lastBuild != null) {
             EnvInjectDetector detector = new EnvInjectDetector();
             if (detector.isEnvInjectPluginActivated()) {
-                EnvInjectAction envInjectAction = lastBuild.getAction(EnvInjectAction.class);
-                if (envInjectAction != null) {
-                    return envInjectAction.getEnvMap();
+                List<Action> actions = lastBuild.getActions();
+                for (Action action : actions) {
+                    if (EnvInjectAction.URL_NAME.equals(action.getUrlName())) {
+                        try {
+                            Method method = action.getClass().getMethod("getEnvMap");
+                            return (Map<String, String>) method.invoke(action);
+                        } catch (NoSuchMethodException e) {
+                            throw new EnvInjectException(e);
+                        } catch (InvocationTargetException e) {
+                            throw new EnvInjectException(e);
+                        } catch (IllegalAccessException e) {
+                            throw new EnvInjectException(e);
+                        }
+                    }
                 }
             }
         }
+
         return getDefaultEnvVarsJob(project, node);
     }
 
     private Map<String, String> getDefaultEnvVarsJob(AbstractProject project, Node node) throws EnvInjectException {
+        assert project != null;
+        assert node != null;
+        assert node.getRootPath() != null;
         Map<String, String> result = computeEnvVarsMaster(project);
-        if (node != null) {
-            result.putAll(computeEnvVarsNode(project, node));
-        }
+        result.putAll(computeEnvVarsNode(project, node));
         return result;
     }
 
     private Map<String, String> computeEnvVarsMaster(AbstractProject project) throws EnvInjectException {
+        assert project != null;
         EnvVars env = new EnvVars();
         env.put("JENKINS_SERVER_COOKIE", Util.getDigestOf("ServerID:" + Hudson.getInstance().getSecretKey()));
         env.put("HUDSON_SERVER_COOKIE", Util.getDigestOf("ServerID:" + Hudson.getInstance().getSecretKey())); // Legacy compatibility
@@ -53,6 +76,7 @@ public class EnvVarsResolver implements Serializable {
     }
 
     private Map<String, String> computeEnvVarsNode(AbstractProject project, Node node) throws EnvInjectException {
+        assert project != null;
         assert node != null;
         assert node.getRootPath() != null;
         try {
