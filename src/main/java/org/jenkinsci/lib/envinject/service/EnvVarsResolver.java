@@ -5,6 +5,8 @@ import hudson.FilePath;
 import hudson.Util;
 import hudson.model.*;
 import hudson.remoting.Callable;
+import hudson.slaves.EnvironmentVariablesNodeProperty;
+import hudson.slaves.NodeProperty;
 import org.jenkinsci.lib.envinject.EnvInjectAction;
 import org.jenkinsci.lib.envinject.EnvInjectException;
 
@@ -87,12 +89,13 @@ public class EnvVarsResolver implements Serializable {
         assert project != null;
         assert node != null;
         assert node.getRootPath() != null;
-        Map<String, String> result = computeEnvVarsMaster(project);
-        result.putAll(computeEnvVarsNode(project, node));
+        Map<String, String> result = gatherEnvVarsMaster(project);
+        result.putAll(gatherEnvVarsNode(project, node));
+        result.putAll(gatherEnvVarsNodeProperties());
         return result;
     }
 
-    private Map<String, String> computeEnvVarsMaster(AbstractProject project) throws EnvInjectException {
+    private Map<String, String> gatherEnvVarsMaster(AbstractProject project) throws EnvInjectException {
         assert project != null;
         EnvVars env = new EnvVars();
         env.put("JENKINS_SERVER_COOKIE", Util.getDigestOf("ServerID:" + Hudson.getInstance().getSecretKey()));
@@ -103,7 +106,27 @@ public class EnvVarsResolver implements Serializable {
         return env;
     }
 
-    private Map<String, String> computeEnvVarsNode(AbstractProject project, Node node) throws EnvInjectException {
+    //Strong limitation: Restrict here to EnvironmentVariablesNodeProperty subclasses
+    //in order to avoid the propagation of a Launcher object and a BuildListener object
+    private Map<String, String> gatherEnvVarsNodeProperties() throws EnvInjectException {
+
+        EnvVars env = new EnvVars();
+        for (NodeProperty nodeProperty : Hudson.getInstance().getGlobalNodeProperties()) {
+            if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
+                env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
+            }
+        }
+
+        for (NodeProperty nodeProperty : Computer.currentComputer().getNode().getNodeProperties()) {
+            if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
+                env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
+            }
+        }
+
+        return env;
+    }
+
+    private Map<String, String> gatherEnvVarsNode(AbstractProject project, Node node) throws EnvInjectException {
         assert project != null;
         assert node != null;
         assert node.getRootPath() != null;
