@@ -23,11 +23,11 @@ public class EnvVarsResolver implements Serializable {
     public Map<String, String> getPollingEnvVars(AbstractProject project, Node node) throws EnvInjectException {
 
         if (project == null) {
-            throw new IllegalArgumentException("A project object must be set.");
+            throw new NullPointerException("A project object must be set.");
         }
 
         if (node == null) {
-            throw new IllegalArgumentException("A node must be set.");
+            throw new NullPointerException("A node must be set.");
         }
 
         Run lastBuild = project.getLastBuild();
@@ -53,6 +53,34 @@ public class EnvVarsResolver implements Serializable {
         }
 
         return getDefaultEnvVarsJob(project, node);
+    }
+
+    public Map<String, String> getEnVars(AbstractBuild build) throws EnvInjectException {
+
+        if (build == null) {
+            throw new NullPointerException("A build object must be set.");
+        }
+
+        EnvInjectActionRetriever envInjectActionRetriever = new EnvInjectActionRetriever();
+        EnvInjectAction envInjectAction = envInjectActionRetriever.getEnvInjectAction(build);
+        if (envInjectAction != null) {
+            return envInjectAction.getEnvMap();
+        }
+
+        return getDefaultEnvVarsJob(build.getProject(), build.getBuiltOn());
+    }
+
+    public String resolveEnvVars(AbstractBuild build, String value) throws EnvInjectException {
+
+        if (build == null) {
+            throw new NullPointerException("A build object must be set.");
+        }
+
+        if (value == null) {
+            return null;
+        }
+
+        return Util.replaceMacro(value, getEnVars(build));
     }
 
     private Map<String, String> getDefaultEnvVarsJob(AbstractProject project, Node node) throws EnvInjectException {
