@@ -12,7 +12,7 @@ public class EnvInjectActionRetriever {
     public EnvInjectAction getEnvInjectAction(AbstractBuild<?, ?> build) {
 
         if (build == null) {
-            throw new IllegalArgumentException("A build object must be set.");
+            throw new NullPointerException("A build object must be set.");
         }
 
         EnvInjectAction envInjectAction;

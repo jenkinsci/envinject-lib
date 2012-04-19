@@ -19,7 +19,7 @@ public class EnvInjectSaveable {
     public Map<String, String> getEnvironment(File envInjectBaseDir) throws EnvInjectException {
 
         if (envInjectBaseDir == null) {
-            throw new IllegalArgumentException("A base directory of the envinject file must be set.");
+            throw new NullPointerException("A base directory of the envinject file must be set.");
         }
 
         FileReader fileReader = null;
