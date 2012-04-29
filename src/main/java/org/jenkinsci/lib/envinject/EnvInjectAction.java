@@ -1,6 +1,5 @@
 package org.jenkinsci.lib.envinject;
 
-import com.sun.xml.internal.ws.server.UnsupportedMediaException;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import org.apache.commons.collections.map.UnmodifiableMap;
@@ -100,6 +99,6 @@ public class EnvInjectAction implements Action, StaplerProxy {
 
 
     public Object getTarget() {
-        throw new UnsupportedMediaException();
+        throw new UnsupportedOperationException();
     }
 }
