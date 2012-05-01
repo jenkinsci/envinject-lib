@@ -2,8 +2,8 @@ package org.jenkinsci.lib.envinject.service;
 
 import hudson.Plugin;
 import hudson.model.AbstractBuild;
+import hudson.model.Action;
 import hudson.model.Hudson;
-import org.jenkinsci.lib.envinject.EnvInjectAction;
 
 /**
  * @author Gregory Boissinot
@@ -17,11 +17,11 @@ public class EnvInjectDetector {
         }
 
         EnvInjectActionRetriever envInjectActionRetriever = new EnvInjectActionRetriever();
-        EnvInjectAction envInjectAction = envInjectActionRetriever.getEnvInjectAction(build);
+        Action envInjectAction = envInjectActionRetriever.getEnvInjectAction(build);
         return envInjectAction != null;
     }
 
-    public boolean isEnvInjectPluginActivated() {
+    public boolean isEnvInjectPluginInstalled() {
         Plugin envInjectPlugin = Hudson.getInstance().getPlugin("envinject");
         return envInjectPlugin != null;
     }

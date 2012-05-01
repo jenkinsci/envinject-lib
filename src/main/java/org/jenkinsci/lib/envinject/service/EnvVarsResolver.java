@@ -7,14 +7,12 @@ import hudson.model.*;
 import hudson.remoting.Callable;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.NodeProperty;
-import org.jenkinsci.lib.envinject.EnvInjectAction;
 import org.jenkinsci.lib.envinject.EnvInjectException;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,22 +33,8 @@ public class EnvVarsResolver implements Serializable {
         Run lastBuild = project.getLastBuild();
         if (lastBuild != null) {
             EnvInjectDetector detector = new EnvInjectDetector();
-            if (detector.isEnvInjectPluginActivated()) {
-                List<Action> actions = lastBuild.getActions();
-                for (Action action : actions) {
-                    if (EnvInjectAction.URL_NAME.equals(action.getUrlName())) {
-                        try {
-                            Method method = action.getClass().getMethod("getEnvMap");
-                            return (Map<String, String>) method.invoke(action);
-                        } catch (NoSuchMethodException e) {
-                            throw new EnvInjectException(e);
-                        } catch (InvocationTargetException e) {
-                            throw new EnvInjectException(e);
-                        } catch (IllegalAccessException e) {
-                            throw new EnvInjectException(e);
-                        }
-                    }
-                }
+            if (detector.isEnvInjectPluginInstalled()) {
+                return getEnVars((AbstractBuild) lastBuild);
             }
         }
 
@@ -64,9 +48,18 @@ public class EnvVarsResolver implements Serializable {
         }
 
         EnvInjectActionRetriever envInjectActionRetriever = new EnvInjectActionRetriever();
-        EnvInjectAction envInjectAction = envInjectActionRetriever.getEnvInjectAction(build);
+        Action envInjectAction = envInjectActionRetriever.getEnvInjectAction(build);
         if (envInjectAction != null) {
-            return envInjectAction.getEnvMap();
+            try {
+                Method method = envInjectAction.getClass().getMethod("getEnvMap");
+                return (Map<String, String>) method.invoke(envInjectAction);
+            } catch (NoSuchMethodException e) {
+                throw new EnvInjectException(e);
+            } catch (InvocationTargetException e) {
+                throw new EnvInjectException(e);
+            } catch (IllegalAccessException e) {
+                throw new EnvInjectException(e);
+            }
         }
 
         return getDefaultEnvVarsJob(build.getProject(), build.getBuiltOn());
