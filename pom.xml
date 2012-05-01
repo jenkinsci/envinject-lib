@@ -10,7 +10,7 @@
 
     <groupId>org.jenkins-ci.lib</groupId>
     <artifactId>envinject-lib</artifactId>
-    <version>1.7</version>
+    <version>1.8-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Jenkins EnvInject Library</name>
     <url>https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin</url>
