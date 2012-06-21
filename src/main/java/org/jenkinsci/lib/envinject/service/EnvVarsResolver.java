@@ -110,9 +110,12 @@ public class EnvVarsResolver implements Serializable {
             }
         }
 
-        for (NodeProperty nodeProperty : Computer.currentComputer().getNode().getNodeProperties()) {
-            if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
-                env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
+        Node currentNode = Computer.currentComputer().getNode();
+        if (currentNode != null) {
+            for (NodeProperty nodeProperty : currentNode.getNodeProperties()) {
+                if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
+                    env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
+                }
             }
         }
 
