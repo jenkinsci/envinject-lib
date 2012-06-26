@@ -104,17 +104,21 @@ public class EnvVarsResolver implements Serializable {
     private Map<String, String> gatherEnvVarsNodeProperties() throws EnvInjectException {
 
         EnvVars env = new EnvVars();
+
         for (NodeProperty nodeProperty : Hudson.getInstance().getGlobalNodeProperties()) {
             if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
                 env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
             }
         }
 
-        Node currentNode = Computer.currentComputer().getNode();
-        if (currentNode != null) {
-            for (NodeProperty nodeProperty : currentNode.getNodeProperties()) {
-                if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
-                    env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
+        Computer currentComputer = Computer.currentComputer();
+        if (currentComputer != null) {
+            Node currentNode = currentComputer.getNode();
+            if (currentNode != null) {
+                for (NodeProperty nodeProperty : currentNode.getNodeProperties()) {
+                    if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
+                        env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
+                    }
                 }
             }
         }
