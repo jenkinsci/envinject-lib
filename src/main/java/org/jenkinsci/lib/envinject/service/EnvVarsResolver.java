@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -20,14 +21,10 @@ import java.util.Map;
  */
 public class EnvVarsResolver implements Serializable {
 
-    public Map<String, String> getPollingEnvVars(AbstractProject project, Node node) throws EnvInjectException {
+    public Map<String, String> getPollingEnvVars(AbstractProject project, /*can be null*/ Node node) throws EnvInjectException {
 
         if (project == null) {
             throw new NullPointerException("A project object must be set.");
-        }
-
-        if (node == null) {
-            throw new NullPointerException("A node must be set.");
         }
 
         Run lastBuild = project.getLastBuild();
@@ -36,6 +33,10 @@ public class EnvVarsResolver implements Serializable {
             if (detector.isEnvInjectPluginInstalled()) {
                 return getEnVars((AbstractBuild) lastBuild);
             }
+        }
+
+        if (node == null) {
+            return Collections.emptyMap();
         }
 
         return getDefaultEnvVarsJob(project, node);
@@ -84,7 +85,7 @@ public class EnvVarsResolver implements Serializable {
         assert node.getRootPath() != null;
         Map<String, String> result = gatherEnvVarsMaster(project);
         result.putAll(gatherEnvVarsNode(project, node));
-        result.putAll(gatherEnvVarsNodeProperties());
+        result.putAll(gatherEnvVarsNodeProperties(node));
         return result;
     }
 
@@ -101,7 +102,7 @@ public class EnvVarsResolver implements Serializable {
 
     //Strong limitation: Restrict here to EnvironmentVariablesNodeProperty subclasses
     //in order to avoid the propagation of a Launcher object and a BuildListener object
-    private Map<String, String> gatherEnvVarsNodeProperties() throws EnvInjectException {
+    private Map<String, String> gatherEnvVarsNodeProperties(Node node) throws EnvInjectException {
 
         EnvVars env = new EnvVars();
 
@@ -111,14 +112,10 @@ public class EnvVarsResolver implements Serializable {
             }
         }
 
-        Computer currentComputer = Computer.currentComputer();
-        if (currentComputer != null) {
-            Node currentNode = currentComputer.getNode();
-            if (currentNode != null) {
-                for (NodeProperty nodeProperty : currentNode.getNodeProperties()) {
-                    if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
-                        env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
-                    }
+        if (node != null) {
+            for (NodeProperty nodeProperty : node.getNodeProperties()) {
+                if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
+                    env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
                 }
             }
         }
