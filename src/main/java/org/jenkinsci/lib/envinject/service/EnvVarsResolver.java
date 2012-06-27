@@ -86,6 +86,7 @@ public class EnvVarsResolver implements Serializable {
         Map<String, String> result = gatherEnvVarsMaster(project);
         result.putAll(gatherEnvVarsNode(project, node));
         result.putAll(gatherEnvVarsNodeProperties(node));
+
         return result;
     }
 
@@ -97,6 +98,14 @@ public class EnvVarsResolver implements Serializable {
         env.put("JOB_NAME", project.getFullName());
         env.put("JENKINS_HOME", Hudson.getInstance().getRootDir().getPath());
         env.put("HUDSON_HOME", Hudson.getInstance().getRootDir().getPath());   // legacy compatibility
+
+        String rootUrl = Hudson.getInstance().getRootUrl();
+        if(rootUrl!=null) {
+            env.put("JENKINS_URL", rootUrl);
+            env.put("HUDSON_URL", rootUrl); // Legacy compatibility
+            env.put("JOB_URL", rootUrl+project.getUrl());
+        }
+
         return env;
     }
 
