@@ -100,10 +100,10 @@ public class EnvVarsResolver implements Serializable {
         env.put("HUDSON_HOME", Hudson.getInstance().getRootDir().getPath());   // legacy compatibility
 
         String rootUrl = Hudson.getInstance().getRootUrl();
-        if(rootUrl!=null) {
+        if (rootUrl != null) {
             env.put("JENKINS_URL", rootUrl);
             env.put("HUDSON_URL", rootUrl); // Legacy compatibility
-            env.put("JOB_URL", rootUrl+project.getUrl());
+            env.put("JOB_URL", rootUrl + project.getUrl());
         }
 
         return env;
