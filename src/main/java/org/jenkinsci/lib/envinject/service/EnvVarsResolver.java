@@ -7,6 +7,8 @@ import hudson.model.*;
 import hudson.remoting.Callable;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.NodeProperty;
+import hudson.slaves.NodePropertyDescriptor;
+import hudson.util.DescribableList;
 import org.jenkinsci.lib.envinject.EnvInjectException;
 
 import java.io.IOException;
@@ -115,16 +117,34 @@ public class EnvVarsResolver implements Serializable {
 
         EnvVars env = new EnvVars();
 
-        for (NodeProperty nodeProperty : Hudson.getInstance().getGlobalNodeProperties()) {
-            if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
-                env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
+        Hudson hudson = Hudson.getInstance();
+        if (hudson != null) {
+            DescribableList<NodeProperty<?>, NodePropertyDescriptor> globalNodeProperties = hudson.getGlobalNodeProperties();
+            if (globalNodeProperties != null) {
+                for (NodeProperty nodeProperty : globalNodeProperties) {
+                    if (nodeProperty != null && nodeProperty instanceof EnvironmentVariablesNodeProperty) {
+                        env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
+                    }
+                }
             }
         }
 
         if (node != null) {
-            for (NodeProperty nodeProperty : node.getNodeProperties()) {
-                if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
-                    env.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
+            DescribableList<NodeProperty<?>, NodePropertyDescriptor> nodeProperties = node.getNodeProperties();
+            if (nodeProperties != null) {
+                for (NodeProperty nodeProperty : nodeProperties) {
+                    if (nodeProperty != null && nodeProperty instanceof EnvironmentVariablesNodeProperty) {
+                        EnvVars envVars = ((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars();
+                        if (envVars != null) {
+                            for (Map.Entry<String, String> entry : envVars.entrySet()) {
+                                String key = entry.getKey();
+                                String value = entry.getValue();
+                                if (key != null && value != null) {
+                                    env.put(key, value);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
