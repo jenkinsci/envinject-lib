@@ -90,7 +90,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
             if (resultMap != null) {
                 envMap = resultMap;
             }
-        } catch (EnvInjectException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
 
