@@ -11,7 +11,7 @@ import java.util.TreeMap;
 /**
  * @author Gregory Boissinot
  */
-public class EnvInjectSaveable {
+public class EnvInjectSavable {
 
     private static final String ENVINJECT_TXT_FILENAME = "injectedEnvVars.txt";
     private static final String TOKEN = "=";

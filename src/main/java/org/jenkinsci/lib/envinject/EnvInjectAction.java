@@ -3,7 +3,7 @@ package org.jenkinsci.lib.envinject;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import org.apache.commons.collections.map.UnmodifiableMap;
-import org.jenkinsci.lib.envinject.service.EnvInjectSaveable;
+import org.jenkinsci.lib.envinject.service.EnvInjectSavable;
 import org.kohsuke.stapler.StaplerProxy;
 
 import java.io.File;
@@ -56,7 +56,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
     @SuppressWarnings("unused")
     private Object writeReplace() throws ObjectStreamException {
         try {
-            EnvInjectSaveable dao = new EnvInjectSaveable();
+            EnvInjectSavable dao = new EnvInjectSavable();
 
             if (rootDir == null) {
                 dao.saveEnvironment(build.getRootDir(), envMap);
@@ -64,11 +64,11 @@ public class EnvInjectAction implements Action, StaplerProxy {
             }
 
             dao.saveEnvironment(rootDir, envMap);
-            return this;
-        } catch (EnvInjectException e) {
-            throw new ObjectStreamException(e.getMessage()) {
-            };
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
+
+        return this;
     }
 
     @SuppressWarnings("unused")
@@ -79,7 +79,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
             return this;
         }
 
-        EnvInjectSaveable dao = new EnvInjectSaveable();
+        EnvInjectSavable dao = new EnvInjectSavable();
         Map<String, String> resultMap = null;
         try {
             if (build != null) {
