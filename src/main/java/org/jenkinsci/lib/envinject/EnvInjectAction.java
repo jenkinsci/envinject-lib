@@ -1,6 +1,7 @@
 package org.jenkinsci.lib.envinject;
 
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.Action;
 import org.apache.commons.collections.map.UnmodifiableMap;
 import org.jenkinsci.lib.envinject.service.EnvInjectSavable;
@@ -36,7 +37,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
         envMap.putAll(all);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "unchecked"})
     public Map<String, String> getEnvMap() {
         return UnmodifiableMap.decorate(envMap);
     }
@@ -46,7 +47,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
     }
 
     public String getDisplayName() {
-        return "Injected Environment Variables";
+        return "Environment Variables";
     }
 
     public String getUrlName() {
@@ -83,7 +84,11 @@ public class EnvInjectAction implements Action, StaplerProxy {
         Map<String, String> resultMap = null;
         try {
             if (build != null) {
-                resultMap = dao.getEnvironment(build.getRootDir());
+                AbstractProject project = build.getProject();
+                if (project != null) {
+                    File rootDir = new File(project.getRootDir(), build.getId());
+                    resultMap = dao.getEnvironment(rootDir);
+                }
             } else if (rootDir != null) {
                 resultMap = dao.getEnvironment(rootDir);
             }
