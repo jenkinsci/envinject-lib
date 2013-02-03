@@ -48,15 +48,14 @@ public class EnvInjectAction implements Action, StaplerProxy {
     @SuppressWarnings({"unused", "unchecked"})
     public Map<String, String> getEnvMap() {
         if (envMap == null) {
-
             //Try to fill the envMap from the build injected environment
             //file (injectedEnvVars.txt by default).
             try {
-                envMap = getEnvironment(build);
+                Map<String, String> result = getEnvironment(build);
+                return result == null ? null : UnmodifiableMap.decorate(result);
             } catch (EnvInjectException e) {
                 return null;
             }
-            return envMap;
         }
 
         return UnmodifiableMap.decorate(envMap);
