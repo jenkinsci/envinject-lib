@@ -34,11 +34,31 @@ public class EnvInjectAction implements Action, StaplerProxy {
     }
 
     public void overrideAll(Map<String, String> all) {
+        if (envMap == null) {
+            return;
+        }
+
+        if (all == null) {
+            return;
+        }
+
         envMap.putAll(all);
     }
 
     @SuppressWarnings({"unused", "unchecked"})
     public Map<String, String> getEnvMap() {
+        if (envMap == null) {
+
+            //Try to fill the envMap from the build injected environment
+            //file (injectedEnvVars.txt by default).
+            try {
+                envMap = getEnvironment(build);
+            } catch (EnvInjectException e) {
+                return null;
+            }
+            return envMap;
+        }
+
         return UnmodifiableMap.decorate(envMap);
     }
 
@@ -72,6 +92,24 @@ public class EnvInjectAction implements Action, StaplerProxy {
         return this;
     }
 
+
+    private Map<String, String> getEnvironment(AbstractBuild build) throws EnvInjectException {
+
+        if (build == null) {
+            return null;
+        }
+
+        AbstractProject project = build.getProject();
+        if (project == null) {
+            return null;
+        }
+
+        EnvInjectSavable dao = new EnvInjectSavable();
+        File rootDir = new File(project.getRootDir(), build.getId());
+        return dao.getEnvironment(rootDir);
+    }
+
+
     @SuppressWarnings("unused")
     private Object readResolve() throws ObjectStreamException {
 
@@ -80,21 +118,20 @@ public class EnvInjectAction implements Action, StaplerProxy {
             return this;
         }
 
-        EnvInjectSavable dao = new EnvInjectSavable();
         Map<String, String> resultMap = null;
         try {
             if (build != null) {
-                AbstractProject project = build.getProject();
-                if (project != null) {
-                    File rootDir = new File(project.getRootDir(), build.getId());
-                    resultMap = dao.getEnvironment(rootDir);
-                }
+                return getEnvironment(build);
             } else if (rootDir != null) {
+                EnvInjectSavable dao = new EnvInjectSavable();
                 resultMap = dao.getEnvironment(rootDir);
             }
+
+
             if (resultMap != null) {
                 envMap = resultMap;
             }
+
         } catch (Throwable e) {
             e.printStackTrace();
         }
