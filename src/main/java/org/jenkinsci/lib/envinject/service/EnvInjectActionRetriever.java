@@ -29,6 +29,10 @@ public class EnvInjectActionRetriever {
         }
 
         for (Action action : actions) {
+            if (action == null) {
+                continue;
+            }
+
             if (EnvInjectAction.URL_NAME.equals(action.getUrlName())) {
                 return action;
             }
