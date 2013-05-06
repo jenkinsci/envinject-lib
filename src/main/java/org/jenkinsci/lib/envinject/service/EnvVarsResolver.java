@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -38,7 +37,10 @@ public class EnvVarsResolver implements Serializable {
         }
 
         if (node == null) {
-            return Collections.emptyMap();
+            return getFallBackMasterNode(project);
+        }
+        if (node.getRootPath() == null) {
+            return getFallBackMasterNode(project);
         }
 
         return getDefaultEnvVarsJob(project, node);
@@ -65,7 +67,34 @@ public class EnvVarsResolver implements Serializable {
             }
         }
 
-        return getDefaultEnvVarsJob(build.getProject(), build.getBuiltOn());
+        Node builtOn = build.getBuiltOn();
+        //-- Check if node is always on. Otherwise, gather master env vars
+        if (builtOn == null) {
+            return getFallBackMasterNode(build.getProject());
+        }
+        if (builtOn.getRootPath() == null) {
+            return getFallBackMasterNode(build.getProject());
+        }
+        //-- End check
+
+        //Get envVars from the node of the last build
+        return getDefaultEnvVarsJob(build.getProject(), builtOn);
+    }
+
+    private Map<String, String> getFallBackMasterNode(AbstractProject project) throws EnvInjectException {
+        Node masterNode = getMasterNode();
+        if (masterNode == null) {
+            return gatherEnvVarsMaster(project);
+        }
+        return getDefaultEnvVarsJob(project, masterNode);
+    }
+
+    private Node getMasterNode() {
+        Computer computer = Hudson.getInstance().toComputer();
+        if (computer == null) {
+            return null; //Master can have no executors
+        }
+        return computer.getNode();
     }
 
     public String resolveEnvVars(AbstractBuild build, String value) throws EnvInjectException {
@@ -81,14 +110,15 @@ public class EnvVarsResolver implements Serializable {
         return Util.replaceMacro(value, getEnVars(build));
     }
 
+
     private Map<String, String> getDefaultEnvVarsJob(AbstractProject project, Node node) throws EnvInjectException {
         assert project != null;
         assert node != null;
         assert node.getRootPath() != null;
+        //--- Same code for master or a slave node
         Map<String, String> result = gatherEnvVarsMaster(project);
         result.putAll(gatherEnvVarsNode(project, node));
         result.putAll(gatherEnvVarsNodeProperties(node));
-
         return result;
     }
 
