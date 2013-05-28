@@ -187,11 +187,11 @@ public class EnvVarsResolver implements Serializable {
         assert node != null;
         assert node.getRootPath() != null;
         try {
-            Map<String, String> envVars = node.getRootPath().act(new Callable<Map<String, String>, EnvInjectException>() {
+            Map<String, String> envVars = new EnvVars(node.getRootPath().act(new Callable<Map<String, String>, EnvInjectException>() {
                 public Map<String, String> call() throws EnvInjectException {
                     return EnvVars.masterEnvVars;
                 }
-            });
+            }));
 
             envVars.put("NODE_NAME", node.getNodeName());
             envVars.put("NODE_LABELS", Util.join(node.getAssignedLabels(), " "));
