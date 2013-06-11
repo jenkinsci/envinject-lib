@@ -104,8 +104,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
         }
 
         EnvInjectSavable dao = new EnvInjectSavable();
-        File rootDir = new File(project.getRootDir(), build.getId());
-        return dao.getEnvironment(rootDir);
+        return dao.getEnvironment(build.getRootDir());
     }
 
 
@@ -120,12 +119,11 @@ public class EnvInjectAction implements Action, StaplerProxy {
         Map<String, String> resultMap = null;
         try {
             if (build != null) {
-                return getEnvironment(build);
+                resultMap = getEnvironment(build);
             } else if (rootDir != null) {
                 EnvInjectSavable dao = new EnvInjectSavable();
                 resultMap = dao.getEnvironment(rootDir);
             }
-
 
             if (resultMap != null) {
                 envMap = resultMap;
