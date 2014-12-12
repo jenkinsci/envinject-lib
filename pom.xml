@@ -38,7 +38,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
-        <jenkins.core.version>1.410</jenkins.core.version>
+        <jenkins.core.version>1.532</jenkins.core.version>
     </properties>
 
     <scm>

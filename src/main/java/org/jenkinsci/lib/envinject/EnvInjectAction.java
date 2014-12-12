@@ -1,5 +1,6 @@
 package org.jenkinsci.lib.envinject;
 
+import com.google.common.collect.Maps;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
@@ -9,7 +10,9 @@ import org.kohsuke.stapler.StaplerProxy;
 
 import java.io.File;
 import java.io.ObjectStreamException;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Gregory Boissinot
@@ -34,6 +37,10 @@ public class EnvInjectAction implements Action, StaplerProxy {
     }
 
     public void overrideAll(Map<String, String> all) {
+        overrideAll(Collections.<String>emptySet(), all);
+    }
+
+    public void overrideAll(final Set<String> sensibleVariables, Map<String, String> all) {
         if (envMap == null) {
             return;
         }
@@ -42,7 +49,12 @@ public class EnvInjectAction implements Action, StaplerProxy {
             return;
         }
 
-        envMap.putAll(all);
+        envMap.putAll(Maps.transformEntries(all,
+                new Maps.EntryTransformer<String, String, String>() {
+                    public String transformEntry(String key, String value) {
+                        return sensibleVariables.contains(key) ? "********" : value;
+                    }
+                }));
     }
 
     @SuppressWarnings({"unused", "unchecked"})
