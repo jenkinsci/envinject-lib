@@ -30,6 +30,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
      */
     private transient Map<String, String> resultVariables;
     private transient File rootDir;
+    private transient Set<String> sensibleVariables;
 
     public EnvInjectAction(AbstractBuild build, Map<String, String> envMap) {
         this.build = build;
@@ -49,12 +50,8 @@ public class EnvInjectAction implements Action, StaplerProxy {
             return;
         }
 
-        envMap.putAll(Maps.transformEntries(all,
-                new Maps.EntryTransformer<String, String, String>() {
-                    public String transformEntry(String key, String value) {
-                        return sensibleVariables.contains(key) ? "********" : value;
-                    }
-                }));
+        this.sensibleVariables = sensibleVariables;
+        envMap.putAll(all);
     }
 
     @SuppressWarnings({"unused", "unchecked"})
@@ -91,7 +88,12 @@ public class EnvInjectAction implements Action, StaplerProxy {
             EnvInjectSavable dao = new EnvInjectSavable();
 
             if (rootDir == null) {
-                dao.saveEnvironment(build.getRootDir(), envMap);
+                dao.saveEnvironment(build.getRootDir(), Maps.transformEntries(envMap,
+                        new Maps.EntryTransformer<String, String, String>() {
+                            public String transformEntry(String key, String value) {
+                                return sensibleVariables.contains(key) ? "********" : value;
+                            }
+                        }));
                 return this;
             }
 
@@ -151,5 +153,9 @@ public class EnvInjectAction implements Action, StaplerProxy {
 
     public Object getTarget() {
         throw new UnsupportedOperationException();
+    }
+
+    public Set<String> getSensibleVariables() {
+        return sensibleVariables;
     }
 }
