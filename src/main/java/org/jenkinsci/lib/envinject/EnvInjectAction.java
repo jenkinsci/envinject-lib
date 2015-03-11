@@ -13,6 +13,7 @@ import java.io.ObjectStreamException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.CheckForNull;
 
 /**
  * @author Gregory Boissinot
@@ -21,7 +22,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
 
     public static final String URL_NAME = "injectedEnvVars";
 
-    protected transient Map<String, String> envMap;
+    protected transient @CheckForNull Map<String, String> envMap;
 
     private AbstractBuild build;
 
@@ -30,9 +31,10 @@ public class EnvInjectAction implements Action, StaplerProxy {
      */
     private transient Map<String, String> resultVariables;
     private transient File rootDir;
-    private transient Set<String> sensibleVariables;
+    private transient @CheckForNull Set<String> sensibleVariables;
 
-    public EnvInjectAction(AbstractBuild build, Map<String, String> envMap) {
+    public EnvInjectAction(AbstractBuild build, 
+            @CheckForNull Map<String, String> envMap) {
         this.build = build;
         this.envMap = envMap;
     }
@@ -41,7 +43,9 @@ public class EnvInjectAction implements Action, StaplerProxy {
         overrideAll(Collections.<String>emptySet(), all);
     }
 
-    public void overrideAll(final Set<String> sensibleVariables, Map<String, String> all) {
+    public void overrideAll(
+            final @CheckForNull Set<String> sensibleVariables, 
+            @CheckForNull Map<String, String> all) {
         if (envMap == null) {
             return;
         }
@@ -91,7 +95,8 @@ public class EnvInjectAction implements Action, StaplerProxy {
                 dao.saveEnvironment(build.getRootDir(), Maps.transformEntries(envMap,
                         new Maps.EntryTransformer<String, String, String>() {
                             public String transformEntry(String key, String value) {
-                                return sensibleVariables.contains(key) ? "********" : value;
+                                return (sensibleVariables != null && sensibleVariables.contains(key)) 
+                                        ? "********" : value;
                             }
                         }));
                 return this;
@@ -155,7 +160,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
         throw new UnsupportedOperationException();
     }
 
-    public Set<String> getSensibleVariables() {
+    public @CheckForNull Set<String> getSensibleVariables() {
         return sensibleVariables;
     }
 }
