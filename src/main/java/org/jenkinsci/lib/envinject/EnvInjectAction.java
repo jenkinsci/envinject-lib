@@ -91,7 +91,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
                 dao.saveEnvironment(build.getRootDir(), Maps.transformEntries(envMap,
                         new Maps.EntryTransformer<String, String, String>() {
                             public String transformEntry(String key, String value) {
-                                return sensibleVariables.contains(key) ? "********" : value;
+                                return sensibleVariables != null && sensibleVariables.contains(key) ? "********" : value;
                             }
                         }));
                 return this;
