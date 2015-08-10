@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.Run;
 import org.apache.commons.collections.map.UnmodifiableMap;
 import org.jenkinsci.lib.envinject.service.EnvInjectSavable;
 import org.kohsuke.stapler.StaplerProxy;
@@ -14,7 +15,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
+//TODO: Convert to RunAction2
 /**
  * @author Gregory Boissinot
  */
@@ -23,8 +26,8 @@ public class EnvInjectAction implements Action, StaplerProxy {
     public static final String URL_NAME = "injectedEnvVars";
 
     protected transient @CheckForNull Map<String, String> envMap;
-
-    private AbstractBuild build;
+ 
+    private @Nonnull AbstractBuild build;
 
     /**
      * Backward compatibility
@@ -33,7 +36,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
     private transient File rootDir;
     private transient @CheckForNull Set<String> sensibleVariables;
 
-    public EnvInjectAction(AbstractBuild build, 
+    public EnvInjectAction(@Nonnull AbstractBuild build, 
             @CheckForNull Map<String, String> envMap) {
         this.build = build;
         this.envMap = envMap;
@@ -111,7 +114,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
     }
 
 
-    private Map<String, String> getEnvironment(AbstractBuild build) throws EnvInjectException {
+    private Map<String, String> getEnvironment(@CheckForNull AbstractBuild build) throws EnvInjectException {
 
         if (build == null) {
             return null;
@@ -126,7 +129,15 @@ public class EnvInjectAction implements Action, StaplerProxy {
         return dao.getEnvironment(build.getRootDir());
     }
 
-
+    /**
+     * Retrieves an owner {@link Run} of this action.
+     * @return {@link Run}, which contains the action
+     * @since TODO
+     */
+    public Run<?,?> getOwner() {
+        return build;
+    }
+    
     @SuppressWarnings("unused")
     private Object readResolve() throws ObjectStreamException {
 
