@@ -30,7 +30,7 @@ public class EnvInjectActionRetriever {
         } catch (ClassNotFoundException e) {
             actions = build.getActions();
         }
-        
+
         for (Action action : actions) {
             if (action == null) {
                 continue;
