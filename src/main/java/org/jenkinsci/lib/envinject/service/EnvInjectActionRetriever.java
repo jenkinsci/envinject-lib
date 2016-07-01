@@ -19,27 +19,17 @@ public class EnvInjectActionRetriever {
     //with EnvInjectAction subclasses. Subclasses cannot be casted from
     //all point of Jenkins (classes are not loaded in some points)
     public Action getEnvInjectAction(AbstractBuild<?, ?> build) {
+        List<Action> actions;
         if (build == null) {
             throw new NullPointerException("A build object must be set.");
         }
         try {
             Class<?> matrixClass = Class.forName("hudson.matrix.MatrixRun");
-            List<Action> actions;
             if (matrixClass.isInstance(build)) {
                 Method method = matrixClass.getMethod("getParentBuild", null);
                 Object object = method.invoke(build);
                 if (object instanceof AbstractBuild<?, ?>) {
                     build = (AbstractBuild<?, ?>) object;
-                }
-            }
-            actions = build.getActions();
-            for (Action action : actions) {
-                if (action == null) {
-                    continue;
-                }
-
-                if (EnvInjectAction.URL_NAME.equals(action.getUrlName())) {
-                    return action;
                 }
             }
         } catch (ClassNotFoundException e) {
@@ -50,6 +40,16 @@ public class EnvInjectActionRetriever {
             LOGGER.log(Level.WARNING, String.format("There was a problem in the invocation of getParentBuild in hudson.matrix.MatrixRun", e));
         } catch (InvocationTargetException e) {
             LOGGER.log(Level.WARNING, String.format("There was a problem in the invocation of getParentBuild in hudson.matrix.MatrixRun", e));
+        }
+        actions = build.getActions();
+        for (Action action : actions) {
+            if (action == null) {
+                continue;
+            }
+
+            if (EnvInjectAction.URL_NAME.equals(action.getUrlName())) {
+                return action;
+            }
         }
         return null;
     }
