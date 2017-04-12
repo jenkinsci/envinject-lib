@@ -1,9 +1,7 @@
 package org.jenkinsci.lib.envinject;
 
 import com.google.common.collect.Maps;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
+import hudson.model.Job;
 import hudson.model.Run;
 import org.apache.commons.collections.map.UnmodifiableMap;
 import org.jenkinsci.lib.envinject.service.EnvInjectSavable;
@@ -16,19 +14,29 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import jenkins.model.RunAction2;
 
-//TODO: Convert to RunAction2
 /**
  * @author Gregory Boissinot
  */
-public class EnvInjectAction implements Action, StaplerProxy {
+public class EnvInjectAction implements RunAction2, StaplerProxy {
 
     public static final String URL_NAME = "injectedEnvVars";
 
     protected transient @CheckForNull Map<String, String> envMap;
  
-    private @Nonnull AbstractBuild build;
+    private transient @Nonnull Run<?, ?> build;
 
+    @Override
+    public void onAttached(Run<?, ?> run) {
+        build = run;
+    }
+
+    @Override
+    public void onLoad(Run<?, ?> run) {
+        build = run;
+    }
+ 
     /**
      * Backward compatibility
      */
@@ -36,7 +44,7 @@ public class EnvInjectAction implements Action, StaplerProxy {
     private transient File rootDir;
     private transient @CheckForNull Set<String> sensibleVariables;
 
-    public EnvInjectAction(@Nonnull AbstractBuild build, 
+    public EnvInjectAction(@Nonnull Run<?,?> build, 
             @CheckForNull Map<String, String> envMap) {
         this.build = build;
         this.envMap = envMap;
@@ -114,13 +122,13 @@ public class EnvInjectAction implements Action, StaplerProxy {
     }
 
 
-    private Map<String, String> getEnvironment(@CheckForNull AbstractBuild build) throws EnvInjectException {
+    private Map<String, String> getEnvironment(@CheckForNull Run<?, ?> build) throws EnvInjectException {
 
         if (build == null) {
             return null;
         }
 
-        AbstractProject project = build.getProject();
+        Job<?, ?> project = build.getParent();
         if (project == null) {
             return null;
         }
