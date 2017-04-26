@@ -1,6 +1,7 @@
 package org.jenkinsci.lib.envinject;
 
 import com.google.common.collect.Maps;
+import hudson.model.AbstractBuild;
 import hudson.model.Job;
 import hudson.model.Run;
 import org.apache.commons.collections.map.UnmodifiableMap;
@@ -44,9 +45,26 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
     private transient File rootDir;
     private transient @CheckForNull Set<String> sensibleVariables;
 
-    public EnvInjectAction(@Nonnull Run<?,?> build, 
+    /**
+     * Constructs action for the specified environment variables.
+     * @param build Build
+     * @param envMap Environment Map 
+     * @deprecated The action implements {@link RunAction2} now, hence passing build is not required anymore.
+     *             Use {@link #EnvInjectAction(java.util.Map)}.
+     */
+    @Deprecated
+    public EnvInjectAction(@Nonnull AbstractBuild build, 
             @CheckForNull Map<String, String> envMap) {
         this.build = build;
+        this.envMap = envMap;
+    }
+    
+    /**
+     * Constructs action for the specified environment variables.
+     * @param envMap Environment Map 
+     * @since 0.25
+     */
+    public EnvInjectAction(@CheckForNull Map<String, String> envMap) {
         this.envMap = envMap;
     }
 
