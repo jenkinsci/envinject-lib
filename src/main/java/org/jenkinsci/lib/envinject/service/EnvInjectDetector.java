@@ -4,10 +4,14 @@ import hudson.Plugin;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.Hudson;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * @author Gregory Boissinot
  */
+@Deprecated
+@Restricted(NoExternalUse.class)
 public class EnvInjectDetector {
 
     public boolean isEnvInjectActivated(AbstractBuild build) {

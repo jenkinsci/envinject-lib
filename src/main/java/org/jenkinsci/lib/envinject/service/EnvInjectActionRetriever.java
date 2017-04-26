@@ -9,10 +9,15 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * @author Gregory Boissinot
+ * @deprecated The actual version of this API class is located in EnvInject API Plugin
  */
+@Deprecated
+@Restricted(NoExternalUse.class)
 public class EnvInjectActionRetriever {
 
     //Returns the abstract class Action due to a class loading issue
