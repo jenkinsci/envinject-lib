@@ -1,7 +1,7 @@
 package org.jenkinsci.lib.envinject.service;
 
+import hudson.model.AbstractBuild;
 import hudson.model.Action;
-import hudson.model.Run;
 import org.jenkinsci.lib.envinject.EnvInjectAction;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
 
 /**
  * @author Gregory Boissinot
@@ -19,18 +18,18 @@ public class EnvInjectActionRetriever {
     //Returns the abstract class Action due to a class loading issue
     //with EnvInjectAction subclasses. Subclasses cannot be casted from
     //all point of Jenkins (classes are not loaded in some points)
-    public Action getEnvInjectAction(@Nonnull Run<?, ?> build) {
+    public Action getEnvInjectAction(AbstractBuild<?, ?> build) {
         List<Action> actions;
         if (build == null) {
-            throw new NullPointerException("A Run object must be set.");
+            throw new NullPointerException("A build object must be set.");
         }
         try {
             Class<?> matrixClass = Class.forName("hudson.matrix.MatrixRun");
             if (matrixClass.isInstance(build)) {
                 Method method = matrixClass.getMethod("getParentBuild", null);
                 Object object = method.invoke(build);
-                if (object instanceof Run<?, ?>) {
-                    build = (Run<?, ?>) object;
+                if (object instanceof AbstractBuild<?, ?>) {
+                    build = (AbstractBuild<?, ?>) object;
                 }
             }
         } catch (ClassNotFoundException e) {

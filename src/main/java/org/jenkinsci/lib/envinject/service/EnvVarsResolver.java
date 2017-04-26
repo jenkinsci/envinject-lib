@@ -22,38 +22,38 @@ import java.util.Map;
  */
 public class EnvVarsResolver implements Serializable {
 
-    public Map<String, String> getPollingEnvVars(Job<?, ?> job, /*can be null*/ Node node) throws EnvInjectException {
+    public Map<String, String> getPollingEnvVars(AbstractProject project, /*can be null*/ Node node) throws EnvInjectException {
 
-        if (job == null) {
+        if (project == null) {
             throw new NullPointerException("A project object must be set.");
         }
 
-        Run lastBuild = job.getLastBuild();
+        Run lastBuild = project.getLastBuild();
         if (lastBuild != null) {
             EnvInjectDetector detector = new EnvInjectDetector();
             if (detector.isEnvInjectPluginInstalled()) {
-                return getEnVars(lastBuild);
+                return getEnVars((AbstractBuild) lastBuild);
             }
         }
 
         if (node == null) {
-            return getFallBackMasterNode(job);
+            return getFallBackMasterNode(project);
         }
         if (node.getRootPath() == null) {
-            return getFallBackMasterNode(job);
+            return getFallBackMasterNode(project);
         }
 
-        return getDefaultEnvVarsJob(job, node);
+        return getDefaultEnvVarsJob(project, node);
     }
 
-    public Map<String, String> getEnVars(Run<?, ?> run) throws EnvInjectException {
+    public Map<String, String> getEnVars(AbstractBuild build) throws EnvInjectException {
 
-        if (run == null) {
+        if (build == null) {
             throw new NullPointerException("A build object must be set.");
         }
 
         EnvInjectActionRetriever envInjectActionRetriever = new EnvInjectActionRetriever();
-        Action envInjectAction = envInjectActionRetriever.getEnvInjectAction(run);
+        Action envInjectAction = envInjectActionRetriever.getEnvInjectAction(build);
         if (envInjectAction != null) {
             try {
                 Method method = envInjectAction.getClass().getMethod("getEnvMap");
@@ -67,27 +67,26 @@ public class EnvVarsResolver implements Serializable {
             }
         }
 
-        // Retrieve node used for this build
-        Node builtOn = (run instanceof AbstractBuild) ? ((AbstractBuild)run).getBuiltOn() : null;
-        
-        // Check if node is always on. Otherwise, gather master env vars
+        Node builtOn = build.getBuiltOn();
+        //-- Check if node is always on. Otherwise, gather master env vars
         if (builtOn == null) {
-            return getFallBackMasterNode(run.getParent());
+            return getFallBackMasterNode(build.getProject());
         }
         if (builtOn.getRootPath() == null) {
-            return getFallBackMasterNode(run.getParent());
+            return getFallBackMasterNode(build.getProject());
         }
+        //-- End check
 
-        // Get envVars from the node of the last build
-        return getDefaultEnvVarsJob(run.getParent(), builtOn);
+        //Get envVars from the node of the last build
+        return getDefaultEnvVarsJob(build.getProject(), builtOn);
     }
 
-    private Map<String, String> getFallBackMasterNode(Job<?, ?> job) throws EnvInjectException {
+    private Map<String, String> getFallBackMasterNode(AbstractProject project) throws EnvInjectException {
         Node masterNode = getMasterNode();
         if (masterNode == null) {
-            return gatherEnvVarsMaster(job);
+            return gatherEnvVarsMaster(project);
         }
-        return getDefaultEnvVarsJob(job, masterNode);
+        return getDefaultEnvVarsJob(project, masterNode);
     }
 
     private Node getMasterNode() {
@@ -98,9 +97,9 @@ public class EnvVarsResolver implements Serializable {
         return computer.getNode();
     }
 
-    public String resolveEnvVars(Run<?, ?> run, String value) throws EnvInjectException {
+    public String resolveEnvVars(AbstractBuild build, String value) throws EnvInjectException {
 
-        if (run == null) {
+        if (build == null) {
             throw new NullPointerException("A build object must be set.");
         }
 
@@ -108,27 +107,27 @@ public class EnvVarsResolver implements Serializable {
             return null;
         }
 
-        return Util.replaceMacro(value, getEnVars(run));
+        return Util.replaceMacro(value, getEnVars(build));
     }
 
 
-    private Map<String, String> getDefaultEnvVarsJob(Job<?, ?> job, Node node) throws EnvInjectException {
-        assert job != null;
+    private Map<String, String> getDefaultEnvVarsJob(AbstractProject project, Node node) throws EnvInjectException {
+        assert project != null;
         assert node != null;
         assert node.getRootPath() != null;
         //--- Same code for master or a slave node
-        Map<String, String> result = gatherEnvVarsMaster(job);
-        result.putAll(gatherEnvVarsNode(job, node));
+        Map<String, String> result = gatherEnvVarsMaster(project);
+        result.putAll(gatherEnvVarsNode(project, node));
         result.putAll(gatherEnvVarsNodeProperties(node));
         return result;
     }
 
-    private Map<String, String> gatherEnvVarsMaster(Job<?, ?> job) throws EnvInjectException {
-        assert job != null;
+    private Map<String, String> gatherEnvVarsMaster(AbstractProject project) throws EnvInjectException {
+        assert project != null;
         EnvVars env = new EnvVars();
         env.put("JENKINS_SERVER_COOKIE", Util.getDigestOf("ServerID:" + Hudson.getInstance().getSecretKey()));
         env.put("HUDSON_SERVER_COOKIE", Util.getDigestOf("ServerID:" + Hudson.getInstance().getSecretKey())); // Legacy compatibility
-        env.put("JOB_NAME", job.getFullName());
+        env.put("JOB_NAME", project.getFullName());
         env.put("JENKINS_HOME", Hudson.getInstance().getRootDir().getPath());
         env.put("HUDSON_HOME", Hudson.getInstance().getRootDir().getPath());   // legacy compatibility
 
@@ -136,7 +135,7 @@ public class EnvVarsResolver implements Serializable {
         if (rootUrl != null) {
             env.put("JENKINS_URL", rootUrl);
             env.put("HUDSON_URL", rootUrl); // Legacy compatibility
-            env.put("JOB_URL", rootUrl + job.getUrl());
+            env.put("JOB_URL", rootUrl + project.getUrl());
         }
 
         return env;
@@ -183,8 +182,8 @@ public class EnvVarsResolver implements Serializable {
         return env;
     }
 
-    private Map<String, String> gatherEnvVarsNode(Job<?, ?> job, Node node) throws EnvInjectException {
-        assert job != null;
+    private Map<String, String> gatherEnvVarsNode(AbstractProject project, Node node) throws EnvInjectException {
+        assert project != null;
         assert node != null;
         assert node.getRootPath() != null;
         try {
@@ -196,12 +195,9 @@ public class EnvVarsResolver implements Serializable {
 
             envVars.put("NODE_NAME", node.getNodeName());
             envVars.put("NODE_LABELS", Util.join(node.getAssignedLabels(), " "));
-            
-            if (job instanceof AbstractProject) {
-                FilePath wFilePath = ((AbstractProject)job).getSomeWorkspace();
-                if (wFilePath != null) {
-                    envVars.put("WORKSPACE", wFilePath.getRemote());
-                }
+            FilePath wFilePath = project.getSomeWorkspace();
+            if (wFilePath != null) {
+                envVars.put("WORKSPACE", wFilePath.getRemote());
             }
 
             return envVars;
