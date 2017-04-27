@@ -7,10 +7,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * @author Gregory Boissinot
+ * @deprecated The actual version of this API class is located in EnvInject API Plugin
  */
+@Deprecated
+@Restricted(NoExternalUse.class)
 public class EnvInjectSavable {
 
     private static final String ENVINJECT_TXT_FILENAME = "injectedEnvVars.txt";

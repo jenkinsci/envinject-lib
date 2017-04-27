@@ -16,10 +16,15 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * @author Gregory Boissinot
+ * @deprecated The actual version of this API class is located in EnvInject API Plugin
  */
+@Deprecated
+@Restricted(NoExternalUse.class)
 public class EnvVarsResolver implements Serializable {
 
     public Map<String, String> getPollingEnvVars(AbstractProject project, /*can be null*/ Node node) throws EnvInjectException {
