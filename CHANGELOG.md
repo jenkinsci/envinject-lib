@@ -3,7 +3,7 @@ Changelog
 
 ### 1.25
 
-Release date: Coming soon
+Release date: _May 02, 2017_
 
 * [JENKINS-43845](https://issues.jenkins-ci.org/browse/JENKINS-43845) -
 Deprecate obsolete utility methods in the library.
