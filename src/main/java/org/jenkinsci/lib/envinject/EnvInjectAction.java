@@ -16,6 +16,8 @@ import java.util.Set;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import jenkins.model.RunAction2;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * @author Gregory Boissinot
@@ -24,6 +26,12 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
 
     public static final String URL_NAME = "injectedEnvVars";
 
+    /**
+     * Local cache of environment variables.
+     * This cache may be null if the loading has never been performed.
+     * Use {@link #getEnvMap()} in external API
+     */
+    @Restricted(NoExternalUse.class)
     protected transient @CheckForNull Map<String, String> envMap;
  
     private transient @Nonnull Run<?, ?> build;
