@@ -35,7 +35,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
     @Restricted(NoExternalUse.class)
     protected transient @CheckForNull Map<String, String> envMap;
  
-    private transient @Nonnull Run<?, ?> build;
+    private transient @CheckForNull Run<?, ?> build;
 
     @Override
     public void onAttached(Run<?, ?> run) {
@@ -73,8 +73,6 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
      * @param envMap Environment Map 
      * @since 0.25
      */
-    @SuppressFBWarnings(value = "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR", 
-            justification = "RunAction2 handlers in the core should do it in all valid use-cases")
     public EnvInjectAction(@CheckForNull Map<String, String> envMap) {
         this.envMap = envMap;
     }
@@ -99,6 +97,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
     }
 
     @SuppressWarnings({"unused", "unchecked"})
+    @CheckForNull
     public Map<String, String> getEnvMap() {
         if (envMap == null) {
             //Try to fill the envMap from the build injected environment
@@ -152,7 +151,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
         return this;
     }
 
-
+    @CheckForNull
     private Map<String, String> getEnvironment(@CheckForNull Run<?, ?> build) throws EnvInjectException {
 
         if (build == null) {
@@ -170,9 +169,11 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
 
     /**
      * Retrieves an owner {@link Run} of this action.
-     * @return {@link Run}, which contains the action
+     * @return {@link Run}, which contains the action.
+     *         May be {@code null} if and only if the action is not attached to the run.
      * @since TODO
      */
+    @CheckForNull
     public Run<?,?> getOwner() {
         return build;
     }
