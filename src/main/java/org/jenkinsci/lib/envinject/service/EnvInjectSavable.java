@@ -1,5 +1,6 @@
 package org.jenkinsci.lib.envinject.service;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jenkinsci.lib.envinject.EnvInjectException;
 
 import java.io.*;
@@ -21,6 +22,7 @@ public class EnvInjectSavable {
     private static final String ENVINJECT_TXT_FILENAME = "injectedEnvVars.txt";
     private static final String TOKEN = "=";
 
+    @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "Deprecated class")
     public Map<String, String> getEnvironment(File envInjectBaseDir) throws EnvInjectException {
 
         if (envInjectBaseDir == null) {
@@ -34,7 +36,7 @@ public class EnvInjectSavable {
                 return null;
             }
             fileReader = new FileReader(f);
-            Map result = new HashMap();
+            final Map<String, String> result = new HashMap<String, String>();
             fromTxt(fileReader, result);
             return result;
         } catch (FileNotFoundException fne) {
@@ -50,6 +52,7 @@ public class EnvInjectSavable {
         }
     }
 
+    @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "Deprecated class")
     public void saveEnvironment(File rootDir, Map<String, String> envMap) throws EnvInjectException {
         FileWriter fileWriter = null;
         try {
@@ -99,7 +102,7 @@ public class EnvInjectSavable {
 
     private void toTxt(Map<String, String> envMap, FileWriter fw) throws IOException {
         for (Map.Entry<String, String> entry : envMap.entrySet()) {
-            fw.write(String.format("%s%s%s\n", entry.getKey(), TOKEN, entry.getValue()));
+            fw.write(String.format("%s%s%s%n", entry.getKey(), TOKEN, entry.getValue()));
         }
     }
 

@@ -1,6 +1,7 @@
 package org.jenkinsci.lib.envinject;
 
 import com.google.common.collect.Maps;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.AbstractBuild;
 import hudson.model.Job;
 import hudson.model.Run;
@@ -72,6 +73,8 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
      * @param envMap Environment Map 
      * @since 0.25
      */
+    @SuppressFBWarnings(value = "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR", 
+            justification = "RunAction2 handlers in the core should do it in all valid use-cases")
     public EnvInjectAction(@CheckForNull Map<String, String> envMap) {
         this.envMap = envMap;
     }
@@ -128,8 +131,10 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
         try {
             EnvInjectSavable dao = new EnvInjectSavable();
 
+            Map<String, String> toWrite = envMap != null ? envMap : Collections.<String, String>emptyMap();
+            
             if (rootDir == null) {
-                dao.saveEnvironment(build.getRootDir(), Maps.transformEntries(envMap,
+                dao.saveEnvironment(build.getRootDir(), Maps.transformEntries(toWrite,
                         new Maps.EntryTransformer<String, String, String>() {
                             public String transformEntry(String key, String value) {
                                 return (sensibleVariables != null && sensibleVariables.contains(key)) 
@@ -139,7 +144,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
                 return this;
             }
 
-            dao.saveEnvironment(rootDir, envMap);
+            dao.saveEnvironment(rootDir, toWrite);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -173,6 +178,8 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
     }
     
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+            justification = "Data migration")
     private Object readResolve() throws ObjectStreamException {
 
         if (resultVariables != null) {
