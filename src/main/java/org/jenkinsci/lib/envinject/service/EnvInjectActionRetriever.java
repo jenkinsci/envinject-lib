@@ -38,13 +38,13 @@ public class EnvInjectActionRetriever {
                 }
             }
         } catch (ClassNotFoundException e) {
-            LOGGER.log(Level.FINEST, String.format("hudson.matrix.MatrixRun is not installed", e));
+            LOGGER.log(Level.FINEST, "hudson.matrix.MatrixRun is not installed", e);
         } catch (NoSuchMethodException e) {
-            LOGGER.log(Level.WARNING, String.format("The method getParentBuild does not exist for hudson.matrix.MatrixRun", e));
+            LOGGER.log(Level.WARNING, "The method getParentBuild does not exist for hudson.matrix.MatrixRun", e);
         } catch (IllegalAccessException e) {
-            LOGGER.log(Level.WARNING, String.format("There was a problem in the invocation of getParentBuild in hudson.matrix.MatrixRun", e));
+            LOGGER.log(Level.WARNING, "There was a problem in the invocation of getParentBuild in hudson.matrix.MatrixRun", e);
         } catch (InvocationTargetException e) {
-            LOGGER.log(Level.WARNING, String.format("There was a problem in the invocation of getParentBuild in hudson.matrix.MatrixRun", e));
+            LOGGER.log(Level.WARNING, "There was a problem in the invocation of getParentBuild in hudson.matrix.MatrixRun", e);
         }
         actions = build.getActions();
         for (Action action : actions) {
