@@ -1,6 +1,16 @@
 Changelog
 ===
 
+### 1.26
+
+Release date: _June 25, 2017_
+
+* [JENKINS-45055](https://issues.jenkins-ci.org/browse/JENKINS-45055) -
+Cleanup issues reported by FindBugs, including misformatted system log messages and `NullPointerException` risk.
+* [PR #9](https://github.com/jenkinsci/envinject-lib/pull/9) -
+Internal API: Restrict access to the `EnvInjectAction#envMap` cache value, getter methods should be used instead.
+It prevents issues like [JENKINS-44965](https://issues.jenkins-ci.org/browse/JENKINS-44965).
+
 ### 1.25
 
 Release date: _May 02, 2017_
