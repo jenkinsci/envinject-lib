@@ -130,11 +130,8 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
         try {
             EnvInjectSavable dao = new EnvInjectSavable();
 
-            Map<String, String> toWrite = getEnvMap();
-            if (toWrite == null) {
-                toWrite = Collections.<String, String>emptyMap();
-            }
-
+            Map<String, String> toWrite = envMap != null ? envMap : Collections.<String, String>emptyMap();
+            
             if (rootDir == null) {
                 dao.saveEnvironment(build.getRootDir(), Maps.transformEntries(toWrite,
                         new Maps.EntryTransformer<String, String, String>() {
