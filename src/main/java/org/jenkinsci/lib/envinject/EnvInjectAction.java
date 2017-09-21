@@ -45,9 +45,6 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
     @Override
     public void onLoad(Run<?, ?> run) {
         build = run;
-        if (envMap == null) {
-            envMap = getEnvMap();
-        }
     }
  
     /**
