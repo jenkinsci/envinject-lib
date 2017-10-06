@@ -105,7 +105,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
             //file (injectedEnvVars.txt by default).
             try {
                 Map<String, String> result = getEnvironment(build);
-                if (build != null && build.getParent() != null) {
+                if (build != null) {
                     // Cache the result so we don't keep loading the environment from disk.
                     envMap = result == null ? new HashMap<String, String>(0) : result;
                 }
@@ -163,11 +163,6 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
     private Map<String, String> getEnvironment(@CheckForNull Run<?, ?> build) throws EnvInjectException {
 
         if (build == null) {
-            return null;
-        }
-
-        Job<?, ?> project = build.getParent();
-        if (project == null) {
             return null;
         }
 
