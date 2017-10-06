@@ -10,7 +10,7 @@
 
     <groupId>org.jenkins-ci.lib</groupId>
     <artifactId>envinject-lib</artifactId>
-    <version>1.27</version>
+    <version>1.28-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Jenkins EnvInject Library</name>
     <url>https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+API+Plugin</url>
@@ -51,7 +51,7 @@
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/envinject-lib.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/envinject-lib.git</developerConnection>
-      <tag>envinject-lib-1.27</tag>
+      <tag>HEAD</tag>
     </scm>
 
     <build>
