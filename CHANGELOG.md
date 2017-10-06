@@ -1,6 +1,17 @@
 Changelog
 ===
 
+### 1.27
+
+Release date: _Oct 07, 2017_
+
+* [JENKINS-46479](https://issues.jenkins-ci.org/browse/JENKINS-46479) -
+Prevent environment variables from being deleted on existing builds.
+* [PR #12](https://github.com/jenkinsci/envinject-lib/pull/12) -
+Update Jenkins core requirement to 1.625.3.
+* [PR #12](https://github.com/jenkinsci/envinject-lib/pull/12) -
+Fix core API usage issues reported by FindBugs.
+
 ### 1.26
 
 Release date: _June 25, 2017_
