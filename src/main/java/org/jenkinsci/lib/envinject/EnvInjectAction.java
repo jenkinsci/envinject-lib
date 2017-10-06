@@ -12,6 +12,7 @@ import org.kohsuke.stapler.StaplerProxy;
 import java.io.File;
 import java.io.ObjectStreamException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.CheckForNull;
@@ -104,6 +105,10 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
             //file (injectedEnvVars.txt by default).
             try {
                 Map<String, String> result = getEnvironment(build);
+                if (build != null && build.getParent() != null) {
+                    // Cache the result so we don't keep loading the environment from disk.
+                    envMap = result == null ? new HashMap<String, String>(0) : result;
+                }
                 return result == null ? null : UnmodifiableMap.decorate(result);
             } catch (EnvInjectException e) {
                 return null;
