@@ -9,6 +9,7 @@ import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import hudson.util.DescribableList;
+import jenkins.security.MasterToSlaveCallable;
 import org.jenkinsci.lib.envinject.EnvInjectException;
 
 import java.io.IOException;
@@ -192,7 +193,7 @@ public class EnvVarsResolver implements Serializable {
         assert node != null;
         assert node.getRootPath() != null;
         try {
-            Map<String, String> envVars = new EnvVars(node.getRootPath().act(new Callable<Map<String, String>, EnvInjectException>() {
+            Map<String, String> envVars = new EnvVars(node.getRootPath().act(new MasterToSlaveCallable<Map<String, String>, EnvInjectException>() {
                 public Map<String, String> call() throws EnvInjectException {
                     return EnvVars.masterEnvVars;
                 }
