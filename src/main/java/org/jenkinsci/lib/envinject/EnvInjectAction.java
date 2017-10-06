@@ -166,11 +166,6 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
             return null;
         }
 
-        Job<?, ?> project = build.getParent();
-        if (project == null) {
-            return null;
-        }
-
         EnvInjectSavable dao = new EnvInjectSavable();
         return dao.getEnvironment(build.getRootDir());
     }

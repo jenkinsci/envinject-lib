@@ -4,11 +4,11 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Util;
 import hudson.model.*;
-import hudson.remoting.Callable;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import hudson.util.DescribableList;
+import jenkins.model.Jenkins;
 import jenkins.security.MasterToSlaveCallable;
 import org.jenkinsci.lib.envinject.EnvInjectException;
 
@@ -19,6 +19,9 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author Gregory Boissinot
@@ -95,8 +98,10 @@ public class EnvVarsResolver implements Serializable {
         return getDefaultEnvVarsJob(project, masterNode);
     }
 
+    @CheckForNull
     private Node getMasterNode() {
-        Computer computer = Hudson.getInstance().toComputer();
+        final Jenkins jenkins = Jenkins.getInstance();
+        Computer computer = jenkins != null ? jenkins.toComputer() : null;
         if (computer == null) {
             return null; //Master can have no executors
         }
@@ -129,15 +134,17 @@ public class EnvVarsResolver implements Serializable {
     }
 
     private Map<String, String> gatherEnvVarsMaster(AbstractProject project) throws EnvInjectException {
+        final Jenkins jenkins = Jenkins.getActiveInstance();
+
         assert project != null;
         EnvVars env = new EnvVars();
-        env.put("JENKINS_SERVER_COOKIE", Util.getDigestOf("ServerID:" + Hudson.getInstance().getSecretKey()));
-        env.put("HUDSON_SERVER_COOKIE", Util.getDigestOf("ServerID:" + Hudson.getInstance().getSecretKey())); // Legacy compatibility
+        env.put("JENKINS_SERVER_COOKIE", Util.getDigestOf("ServerID:" + jenkins.getSecretKey()));
+        env.put("HUDSON_SERVER_COOKIE", Util.getDigestOf("ServerID:" + jenkins.getSecretKey())); // Legacy compatibility
         env.put("JOB_NAME", project.getFullName());
-        env.put("JENKINS_HOME", Hudson.getInstance().getRootDir().getPath());
-        env.put("HUDSON_HOME", Hudson.getInstance().getRootDir().getPath());   // legacy compatibility
+        env.put("JENKINS_HOME", jenkins.getRootDir().getPath());
+        env.put("HUDSON_HOME", jenkins.getRootDir().getPath());   // legacy compatibility
 
-        String rootUrl = Hudson.getInstance().getRootUrl();
+        String rootUrl = jenkins.getRootUrl();
         if (rootUrl != null) {
             env.put("JENKINS_URL", rootUrl);
             env.put("HUDSON_URL", rootUrl); // Legacy compatibility
@@ -153,9 +160,9 @@ public class EnvVarsResolver implements Serializable {
 
         EnvVars env = new EnvVars();
 
-        Hudson hudson = Hudson.getInstance();
-        if (hudson != null) {
-            DescribableList<NodeProperty<?>, NodePropertyDescriptor> globalNodeProperties = hudson.getGlobalNodeProperties();
+        final Jenkins jenkins = Jenkins.getInstance();
+        if (jenkins != null) {
+            DescribableList<NodeProperty<?>, NodePropertyDescriptor> globalNodeProperties = jenkins.getGlobalNodeProperties();
             if (globalNodeProperties != null) {
                 for (NodeProperty nodeProperty : globalNodeProperties) {
                     if (nodeProperty != null && nodeProperty instanceof EnvironmentVariablesNodeProperty) {
@@ -167,17 +174,15 @@ public class EnvVarsResolver implements Serializable {
 
         if (node != null) {
             DescribableList<NodeProperty<?>, NodePropertyDescriptor> nodeProperties = node.getNodeProperties();
-            if (nodeProperties != null) {
-                for (NodeProperty nodeProperty : nodeProperties) {
-                    if (nodeProperty != null && nodeProperty instanceof EnvironmentVariablesNodeProperty) {
-                        EnvVars envVars = ((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars();
-                        if (envVars != null) {
-                            for (Map.Entry<String, String> entry : envVars.entrySet()) {
-                                String key = entry.getKey();
-                                String value = entry.getValue();
-                                if (key != null && value != null) {
-                                    env.put(key, value);
-                                }
+            for (NodeProperty nodeProperty : nodeProperties) {
+                if (nodeProperty != null && nodeProperty instanceof EnvironmentVariablesNodeProperty) {
+                    EnvVars envVars = ((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars();
+                    if (envVars != null) {
+                        for (Map.Entry<String, String> entry : envVars.entrySet()) {
+                            String key = entry.getKey();
+                            String value = entry.getValue();
+                            if (key != null && value != null) {
+                                env.put(key, value);
                             }
                         }
                     }
@@ -188,12 +193,18 @@ public class EnvVarsResolver implements Serializable {
         return env;
     }
 
-    private Map<String, String> gatherEnvVarsNode(AbstractProject project, Node node) throws EnvInjectException {
+    private Map<String, String> gatherEnvVarsNode(@Nonnull AbstractProject project, @Nonnull Node node) throws EnvInjectException {
         assert project != null;
         assert node != null;
-        assert node.getRootPath() != null;
+
+        final FilePath p = node.getRootPath();
+        if (p == null) {
+            throw new EnvInjectException("Cannot get Node root path for node '" + node +
+                    "'. The node is offline or the path is not available");
+        }
+
         try {
-            Map<String, String> envVars = new EnvVars(node.getRootPath().act(new MasterToSlaveCallable<Map<String, String>, EnvInjectException>() {
+            Map<String, String> envVars = new EnvVars(p.act(new MasterToSlaveCallable<Map<String, String>, EnvInjectException>() {
                 public Map<String, String> call() throws EnvInjectException {
                     return EnvVars.masterEnvVars;
                 }

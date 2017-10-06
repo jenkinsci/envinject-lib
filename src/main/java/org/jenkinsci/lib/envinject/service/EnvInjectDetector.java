@@ -4,6 +4,7 @@ import hudson.Plugin;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.Hudson;
+import jenkins.model.Jenkins;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
@@ -27,7 +28,7 @@ public class EnvInjectDetector {
     }
 
     public boolean isEnvInjectPluginInstalled() {
-        Plugin envInjectPlugin = Hudson.getInstance().getPlugin("envinject");
+        Plugin envInjectPlugin = Jenkins.getActiveInstance().getPlugin("envinject");
         return envInjectPlugin != null;
     }
 }
