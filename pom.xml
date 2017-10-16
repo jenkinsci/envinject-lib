@@ -61,6 +61,7 @@
           <artifactId>findbugs-maven-plugin</artifactId>
           <configuration>
             <effort>Max</effort>
+            <threshold>Low</threshold>
             <failOnError>true</failOnError>
           </configuration>
           <executions>

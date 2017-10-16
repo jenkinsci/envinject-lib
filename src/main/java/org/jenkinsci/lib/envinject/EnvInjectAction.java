@@ -10,6 +10,7 @@ import org.jenkinsci.lib.envinject.service.EnvInjectSavable;
 import org.kohsuke.stapler.StaplerProxy;
 
 import java.io.File;
+import java.io.InvalidObjectException;
 import java.io.ObjectStreamException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -140,7 +141,11 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
                 toWrite = Collections.<String, String>emptyMap();
             }
 
-            if (rootDir == null) {
+            if (build == null && rootDir == null) {
+                throw new InvalidObjectException("Cannot save the environment file. Action " + this + " has no associated run instance. Target root dir is unknown");
+            }
+
+            if (rootDir == null) { // New logic
                 dao.saveEnvironment(build.getRootDir(), Maps.transformEntries(toWrite,
                         new Maps.EntryTransformer<String, String, String>() {
                             public String transformEntry(String key, String value) {
@@ -148,10 +153,9 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
                                         ? "********" : value;
                             }
                         }));
-                return this;
+            } else { // Fall-back to the legacy logic
+                dao.saveEnvironment(rootDir, toWrite);
             }
-
-            dao.saveEnvironment(rootDir, toWrite);
         } catch (Throwable e) {
             e.printStackTrace();
         }

@@ -1,5 +1,6 @@
 package org.jenkinsci.lib.envinject.service;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Util;
@@ -29,6 +30,7 @@ import javax.annotation.Nonnull;
  */
 @Deprecated
 @Restricted(NoExternalUse.class)
+@SuppressFBWarnings(value = "SE_NO_SERIALVERSIONID", justification = "Deprecated code")
 public class EnvVarsResolver implements Serializable {
 
     public Map<String, String> getPollingEnvVars(AbstractProject project, /*can be null*/ Node node) throws EnvInjectException {
@@ -204,11 +206,7 @@ public class EnvVarsResolver implements Serializable {
         }
 
         try {
-            Map<String, String> envVars = new EnvVars(p.act(new MasterToSlaveCallable<Map<String, String>, EnvInjectException>() {
-                public Map<String, String> call() throws EnvInjectException {
-                    return EnvVars.masterEnvVars;
-                }
-            }));
+            Map<String, String> envVars = new EnvVars(p.act(new SystemEnvVarsGetter()));
 
             envVars.put("NODE_NAME", node.getNodeName());
             envVars.put("NODE_LABELS", Util.join(node.getAssignedLabels(), " "));
@@ -223,6 +221,12 @@ public class EnvVarsResolver implements Serializable {
             throw new EnvInjectException(ioe);
         } catch (InterruptedException ie) {
             throw new EnvInjectException(ie);
+        }
+    }
+
+    private static final class SystemEnvVarsGetter extends MasterToSlaveCallable<Map<String, String>, EnvInjectException> {
+        public Map<String, String> call() throws EnvInjectException {
+            return EnvVars.masterEnvVars;
         }
     }
 
