@@ -162,7 +162,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
     @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
             justification = "JENKINS-47574 - parent may be null during readResolve()")
     private static boolean runHasNoParent(@Nonnull Run<?,?> run) {
-        return run.getParent() != null;
+        return run.getParent() == null;
     }
 
     @CheckForNull
