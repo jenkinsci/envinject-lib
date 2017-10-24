@@ -1,6 +1,15 @@
 Changelog
 ===
 
+### 1.28
+
+Release date: _Oct 24, 2017_
+
+* [JENKINS-47574](https://issues.jenkins-ci.org/browse/JENKINS-47574) -
+Prevent `NullPointerException` in `EnvInjectAction#getEnvironment()` when it's called in XML deserialization without build reference.
+* [JENKINS-47167](https://issues.jenkins-ci.org/browse/JENKINS-47167) - 
+Prevent `NullPointerException` when serializing `EnvInjectAction` without build reference to the disk.
+
 ### 1.27
 
 Release date: _Oct 07, 2017_
