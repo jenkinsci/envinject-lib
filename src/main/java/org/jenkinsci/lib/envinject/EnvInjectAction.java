@@ -163,10 +163,21 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
         return this;
     }
 
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+            justification = "JENKINS-47574 - parent may be null during readResolve()")
+    private static boolean runHasNoParent(@Nonnull Run<?,?> run) {
+        return run.getParent() == null;
+    }
+
     @CheckForNull
     private Map<String, String> getEnvironment(@CheckForNull Run<?, ?> build) throws EnvInjectException {
 
         if (build == null) {
+            return null;
+        }
+
+        // It happens in the case of usage of this logic for a not-fully loaded build
+        if (runHasNoParent(build)) {
             return null;
         }
 
