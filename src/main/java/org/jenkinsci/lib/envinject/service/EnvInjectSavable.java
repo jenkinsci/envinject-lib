@@ -104,7 +104,10 @@ public class EnvInjectSavable {
 
     private void toTxt(Map<String, String> envMap, FileWriter fw) throws IOException {
         for (Map.Entry<String, String> entry : envMap.entrySet()) {
-            fw.write(String.format("%s%s%s%n", entry.getKey(), TOKEN, entry.getValue()));
+            fw.write(entry.getKey());
+            fw.write(TOKEN);
+            fw.write(entry.getValue());
+            fw.write(System.lineSeparator());
         }
     }
 
