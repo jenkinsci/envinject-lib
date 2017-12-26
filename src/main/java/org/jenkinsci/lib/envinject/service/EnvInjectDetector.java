@@ -3,7 +3,6 @@ package org.jenkinsci.lib.envinject.service;
 import hudson.Plugin;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
-import hudson.model.Hudson;
 import jenkins.model.Jenkins;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;

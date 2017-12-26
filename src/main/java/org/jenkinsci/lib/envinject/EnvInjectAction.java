@@ -3,7 +3,6 @@ package org.jenkinsci.lib.envinject;
 import com.google.common.collect.Maps;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.AbstractBuild;
-import hudson.model.Job;
 import hudson.model.Run;
 import org.apache.commons.collections.map.UnmodifiableMap;
 import org.jenkinsci.lib.envinject.service.EnvInjectSavable;
@@ -138,7 +137,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
 
             Map<String, String> toWrite = getEnvMap();
             if (toWrite == null) {
-                toWrite = Collections.<String, String>emptyMap();
+                toWrite = Collections.emptyMap();
             }
 
             if (build == null && rootDir == null) {
