@@ -69,11 +69,7 @@ public class EnvVarsResolver implements Serializable {
             try {
                 Method method = envInjectAction.getClass().getMethod("getEnvMap");
                 return (Map<String, String>) method.invoke(envInjectAction);
-            } catch (NoSuchMethodException e) {
-                throw new EnvInjectException(e);
-            } catch (InvocationTargetException e) {
-                throw new EnvInjectException(e);
-            } catch (IllegalAccessException e) {
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 throw new EnvInjectException(e);
             }
         }
@@ -217,10 +213,8 @@ public class EnvVarsResolver implements Serializable {
 
             return envVars;
 
-        } catch (IOException ioe) {
+        } catch (IOException | InterruptedException ioe) {
             throw new EnvInjectException(ioe);
-        } catch (InterruptedException ie) {
-            throw new EnvInjectException(ie);
         }
     }
 

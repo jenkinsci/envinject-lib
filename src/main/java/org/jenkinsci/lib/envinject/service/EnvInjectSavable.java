@@ -31,57 +31,36 @@ public class EnvInjectSavable {
             throw new NullPointerException("A base directory of the envinject file must be set.");
         }
 
-        FileReader fileReader = null;
-        try {
-            File f = new File(envInjectBaseDir, ENVINJECT_TXT_FILENAME);
-            if (!f.exists()) {
-                return null;
-            }
-            fileReader = new FileReader(f);
-            final Map<String, String> result = new HashMap<String, String>();
+        File f = new File(envInjectBaseDir, ENVINJECT_TXT_FILENAME);
+        if (!f.exists()) {
+            return null;
+        }
+
+        try(FileReader fileReader = new FileReader(f)) {
+            final Map<String, String> result = new HashMap<>();
             fromTxt(fileReader, result);
             return result;
-        } catch (FileNotFoundException fne) {
+        } catch (IOException fne) {
             throw new EnvInjectException(fne);
-        } finally {
-            if (fileReader != null) {
-                try {
-                    fileReader.close();
-                } catch (IOException ioe) {
-                    throw new EnvInjectException(ioe);
-                }
-            }
         }
     }
 
     @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "Deprecated class")
     public void saveEnvironment(@Nonnull File rootDir,@Nonnull Map<String, String> envMap) throws EnvInjectException {
-        FileWriter fileWriter = null;
-        try {
-            File f = new File(rootDir, ENVINJECT_TXT_FILENAME);
-            fileWriter = new FileWriter(f);
-            Map<String, String> map2Write = new TreeMap<String, String>();
+
+        File f = new File(rootDir, ENVINJECT_TXT_FILENAME);
+        try(FileWriter fileWriter = new FileWriter(f)) {
+            Map<String, String> map2Write = new TreeMap<>();
             map2Write.putAll(envMap);
             toTxt(map2Write, fileWriter);
-        } catch (FileNotFoundException fne) {
-            throw new EnvInjectException(fne);
         } catch (IOException ioe) {
             throw new EnvInjectException(ioe);
-        } finally {
-            if (fileWriter != null) {
-                try {
-                    fileWriter.close();
-                } catch (IOException ioe) {
-                    throw new EnvInjectException(ioe);
-                }
-            }
         }
     }
 
     private void fromTxt(FileReader fileReader, Map<String, String> result) throws EnvInjectException {
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line;
-        try {
+        try(BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             while ((line = bufferedReader.readLine()) != null) {
                 StringTokenizer tokenizer = new StringTokenizer(line, TOKEN);
                 int tokens = tokenizer.countTokens();
@@ -91,14 +70,6 @@ public class EnvInjectSavable {
             }
         } catch (IOException ioe) {
             throw new EnvInjectException(ioe);
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ioe) {
-                    throw new EnvInjectException(ioe);
-                }
-            }
         }
     }
 

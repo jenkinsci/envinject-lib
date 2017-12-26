@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Gregory Boissinot
  * @deprecated The actual version of this API class is located in EnvInject API Plugin
@@ -23,7 +25,7 @@ public class EnvInjectActionRetriever {
     //Returns the abstract class Action due to a class loading issue
     //with EnvInjectAction subclasses. Subclasses cannot be casted from
     //all point of Jenkins (classes are not loaded in some points)
-    public Action getEnvInjectAction(AbstractBuild<?, ?> build) {
+    public Action getEnvInjectAction(@Nonnull AbstractBuild<?, ?> build) {
         List<Action> actions;
         if (build == null) {
             throw new NullPointerException("A build object must be set.");
@@ -31,7 +33,7 @@ public class EnvInjectActionRetriever {
         try {
             Class<?> matrixClass = Class.forName("hudson.matrix.MatrixRun");
             if (matrixClass.isInstance(build)) {
-                Method method = matrixClass.getMethod("getParentBuild", null);
+                Method method = matrixClass.getMethod("getParentBuild");
                 Object object = method.invoke(build);
                 if (object instanceof AbstractBuild<?, ?>) {
                     build = (AbstractBuild<?, ?>) object;
@@ -41,9 +43,7 @@ public class EnvInjectActionRetriever {
             LOGGER.log(Level.FINEST, "hudson.matrix.MatrixRun is not installed", e);
         } catch (NoSuchMethodException e) {
             LOGGER.log(Level.WARNING, "The method getParentBuild does not exist for hudson.matrix.MatrixRun", e);
-        } catch (IllegalAccessException e) {
-            LOGGER.log(Level.WARNING, "There was a problem in the invocation of getParentBuild in hudson.matrix.MatrixRun", e);
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             LOGGER.log(Level.WARNING, "There was a problem in the invocation of getParentBuild in hudson.matrix.MatrixRun", e);
         }
         actions = build.getActions();
