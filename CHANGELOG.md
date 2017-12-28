@@ -1,6 +1,15 @@
 Changelog
 ===
 
+### 1.29
+
+Release date: _Dec 28, 2017_
+
+* [PR #15](https://github.com/jenkinsci/envinject-lib/pull/15) - 
+Remove hidden string concatenation in `envinject.service.EnvInjectSavable` to reduce memory consumption.
+* [PR #16](https://github.com/jenkinsci/envinject-lib/pull/16) -
+Minor code cleanup.
+
 ### 1.28
 
 Release date: _Oct 24, 2017_
