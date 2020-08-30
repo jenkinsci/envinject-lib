@@ -1,5 +1,6 @@
 package org.jenkinsci.lib.envinject.service;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jenkinsci.lib.envinject.EnvInjectException;
 
@@ -10,8 +11,6 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
-
-import javax.annotation.Nonnull;
 
 /**
  * @author Gregory Boissinot
@@ -46,7 +45,7 @@ public class EnvInjectSavable {
     }
 
     @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "Deprecated class")
-    public void saveEnvironment(@Nonnull File rootDir,@Nonnull Map<String, String> envMap) throws EnvInjectException {
+    public void saveEnvironment(@NonNull File rootDir,@NonNull Map<String, String> envMap) throws EnvInjectException {
 
         File f = new File(rootDir, ENVINJECT_TXT_FILENAME);
         try(FileWriter fileWriter = new FileWriter(f)) {
