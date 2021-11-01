@@ -1,6 +1,8 @@
 package org.jenkinsci.lib.envinject;
 
 import com.google.common.collect.Maps;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
@@ -15,8 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 import jenkins.model.RunAction2;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -63,7 +63,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
      *             Use {@link #EnvInjectAction(java.util.Map)}.
      */
     @Deprecated
-    public EnvInjectAction(@Nonnull AbstractBuild build, 
+    public EnvInjectAction(@NonNull AbstractBuild build, 
             @CheckForNull Map<String, String> envMap) {
         this.build = build;
         this.envMap = envMap;
@@ -122,6 +122,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
         return "document-properties.gif";
     }
 
+    @NonNull
     public String getDisplayName() {
         return "Environment Variables";
     }
@@ -164,7 +165,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
 
     @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
             justification = "JENKINS-47574 - parent may be null during readResolve()")
-    private static boolean runHasNoParent(@Nonnull Run<?,?> run) {
+    private static boolean runHasNoParent(@NonNull Run<?,?> run) {
         return run.getParent() == null;
     }
 

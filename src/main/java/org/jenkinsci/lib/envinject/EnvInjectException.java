@@ -1,6 +1,7 @@
 package org.jenkinsci.lib.envinject;
 
-import javax.annotation.Nonnull;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Exception type for the EnvInject logic.
@@ -9,15 +10,15 @@ import javax.annotation.Nonnull;
  */
 public class EnvInjectException extends Exception {
 
-    public EnvInjectException(@Nonnull String s) {
+    public EnvInjectException(@NonNull String s) {
         super(s);
     }
 
-    public EnvInjectException(@Nonnull Throwable throwable) {
+    public EnvInjectException(@NonNull Throwable throwable) {
         super(throwable);
     }
 
-    public EnvInjectException(@Nonnull String s, @Nonnull Throwable throwable) {
+    public EnvInjectException(@NonNull String s, @NonNull Throwable throwable) {
         super(s, throwable);
     }
 }

@@ -1,5 +1,7 @@
 package org.jenkinsci.lib.envinject.service;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.EnvVars;
 import hudson.FilePath;
@@ -20,9 +22,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 
 /**
  * @author Gregory Boissinot
@@ -191,7 +190,7 @@ public class EnvVarsResolver implements Serializable {
         return env;
     }
 
-    private Map<String, String> gatherEnvVarsNode(@Nonnull AbstractProject project, @Nonnull Node node) throws EnvInjectException {
+    private Map<String, String> gatherEnvVarsNode(@NonNull AbstractProject project, @NonNull Node node) throws EnvInjectException {
         assert project != null;
         assert node != null;
 
