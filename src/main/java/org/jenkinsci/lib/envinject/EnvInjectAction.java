@@ -132,7 +132,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
     }
 
     @SuppressWarnings("unused")
-    private Object writeReplace() throws ObjectStreamException {
+    protected Object writeReplace() throws ObjectStreamException {
         try {
             EnvInjectSavable dao = new EnvInjectSavable();
 
