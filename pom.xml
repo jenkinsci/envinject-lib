@@ -47,9 +47,7 @@
             <name>Alex</name>
             <email>contact@notmyfault.dev</email>
             <roles>
-                <role>
-                    Maintainer
-                </role>
+                <role>Maintainer</role>
             </roles>
         </developer>
     </developers>
@@ -66,38 +64,6 @@
         <url>https://github.com/jenkinsci/envinject-lib</url>
       <tag>HEAD</tag>
     </scm>
-
-    <build>
-      <plugins>
-          <plugin>
-              <groupId>com.github.spotbugs</groupId>
-              <artifactId>spotbugs-maven-plugin</artifactId>
-              <configuration>
-                  <failOnError>true</failOnError>
-                  <xmlOutput>true</xmlOutput>
-                  <spotbugsXmlOutput>false</spotbugsXmlOutput>
-                  <effort>Max</effort>
-                  <threshold>Medium</threshold>
-                  <plugins>
-                      <plugin>
-                          <groupId>com.h3xstream.findsecbugs</groupId>
-                          <artifactId>findsecbugs-plugin</artifactId>
-                          <version>1.11.0</version>
-                      </plugin>
-                  </plugins>
-              </configuration>
-              <executions>
-                  <execution>
-                      <id>spotbugs</id>
-                      <goals>
-                          <goal>check</goal>
-                      </goals>
-                      <phase>verify</phase>
-                  </execution>
-              </executions>
-          </plugin>
-      </plugins>
-    </build>
 
     <dependencyManagement>
         <dependencies>
@@ -117,11 +83,6 @@
             <groupId>org.jenkins-ci.main</groupId>
             <artifactId>jenkins-core</artifactId>
             <version>${jenkins.core.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs-annotations</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
