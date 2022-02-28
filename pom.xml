@@ -5,7 +5,8 @@
     <parent>
         <groupId>org.jenkins-ci</groupId>
         <artifactId>jenkins</artifactId>
-        <version>1.56</version>
+        <version>1.71</version>
+        <relativePath />
     </parent>
 
     <groupId>org.jenkins-ci.lib</groupId>
@@ -13,12 +14,13 @@
     <version>1.31-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Jenkins EnvInject Library</name>
-    <url>https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+API+Plugin</url>
+    <url>https://plugins.jenkins.io/envinject-api/</url>
 
     <licenses>
         <license>
             <name>MIT license</name>
             <comments>All source code is under the MIT license.</comments>
+            <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
 
@@ -40,17 +42,28 @@
                 <role>Maintainer</role>
             </roles>
         </developer>
+        <developer>
+            <id>NotMyFault</id>
+            <name>Alex</name>
+            <email>contact@notmyfault.dev</email>
+            <roles>
+                <role>
+                    Maintainer
+                </role>
+            </roles>
+        </developer>
     </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.level>8</java.level>
-        <jenkins.core.version>2.204.1</jenkins.core.version>
+        <jenkins.core.version>2.319.3</jenkins.core.version>
     </properties>
 
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/envinject-lib.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/envinject-lib.git</developerConnection>
+        <url>https://github.com/jenkinsci/envinject-lib</url>
       <tag>HEAD</tag>
     </scm>
 
@@ -59,7 +72,6 @@
           <plugin>
               <groupId>com.github.spotbugs</groupId>
               <artifactId>spotbugs-maven-plugin</artifactId>
-              <version>4.0.4</version>
               <configuration>
                   <failOnError>true</failOnError>
                   <xmlOutput>true</xmlOutput>
@@ -70,7 +82,7 @@
                       <plugin>
                           <groupId>com.h3xstream.findsecbugs</groupId>
                           <artifactId>findsecbugs-plugin</artifactId>
-                          <version>1.10.1</version>
+                          <version>1.11.0</version>
                       </plugin>
                   </plugins>
               </configuration>
@@ -87,6 +99,18 @@
       </plugins>
     </build>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.jenkins.tools.bom</groupId>
+                <artifactId>bom-2.319.x</artifactId>
+                <version>1155.v77b_fd92a_26fc</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
 
         <dependency>
@@ -94,18 +118,6 @@
             <artifactId>jenkins-core</artifactId>
             <version>${jenkins.core.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kohsuke.stapler</groupId>
-            <artifactId>stapler</artifactId>
-            <scope>provided</scope>
-            <version>1.258</version>
-            <exclusions>
-                <exclusion> <!-- pick up from Stapler -->
-                    <groupId>com.google.code.findbugs</groupId>
-                    <artifactId>jsr305</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.spotbugs</groupId>
