@@ -1,6 +1,8 @@
 Changelog
 ===
 
+## New entries can be obtained on the [Releases](https://github.com/jenkinsci/envinject-lib/releases) tab on GitHub.
+
 ### 1.29
 
 Release date: _Dec 28, 2017_

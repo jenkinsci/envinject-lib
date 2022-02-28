@@ -10,15 +10,16 @@
 
     <groupId>org.jenkins-ci.lib</groupId>
     <artifactId>envinject-lib</artifactId>
-    <version>1.31-SNAPSHOT</version>
+    <version>1.${changelist}</version>
     <packaging>jar</packaging>
     <name>Jenkins EnvInject Library</name>
-    <url>https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+API+Plugin</url>
+    <url>https://plugins.jenkins.io/envinject-api/</url>
 
     <licenses>
         <license>
             <name>MIT license</name>
             <comments>All source code is under the MIT license.</comments>
+            <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
 
@@ -40,9 +41,18 @@
                 <role>Maintainer</role>
             </roles>
         </developer>
+        <developer>
+            <id>NotMyFault</id>
+            <name>Alex</name>
+            <email>contact@notmyfault.dev</email>
+            <roles>
+                <role>Maintainer</role>
+            </roles>
+        </developer>
     </developers>
 
     <properties>
+        <changelist>999999-SNAPSHOT</changelist>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.level>8</java.level>
         <jenkins.core.version>2.204.1</jenkins.core.version>
@@ -51,7 +61,8 @@
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/envinject-lib.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/envinject-lib.git</developerConnection>
-      <tag>HEAD</tag>
+        <url>https://github.com/jenkinsci/envinject-lib</url>
+        <tag>${scmTag}</tag>
     </scm>
 
     <build>
