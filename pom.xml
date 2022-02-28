@@ -110,7 +110,7 @@
             <groupId>org.kohsuke.stapler</groupId>
             <artifactId>stapler</artifactId>
             <scope>provided</scope>
-            <version>1.258</version>
+            <version>1642.ve454c4518974</version>
             <exclusions>
                 <exclusion> <!-- pick up from Stapler -->
                     <groupId>com.google.code.findbugs</groupId>
