@@ -70,7 +70,7 @@
           <plugin>
               <groupId>com.github.spotbugs</groupId>
               <artifactId>spotbugs-maven-plugin</artifactId>
-              <version>4.0.4</version>
+              <version>4.5.3.0</version>
               <configuration>
                   <failOnError>true</failOnError>
                   <xmlOutput>true</xmlOutput>
