@@ -55,7 +55,7 @@
         <changelist>999999-SNAPSHOT</changelist>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.level>8</java.level>
-        <jenkins.core.version>2.204.1</jenkins.core.version>
+        <jenkins.core.version>2.340</jenkins.core.version>
     </properties>
 
     <scm>
