@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jenkins-ci</groupId>
         <artifactId>jenkins</artifactId>
-        <version>1.56</version>
+        <version>1.72</version>
     </parent>
 
     <groupId>org.jenkins-ci.lib</groupId>
@@ -55,7 +55,7 @@
         <changelist>999999-SNAPSHOT</changelist>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.level>8</java.level>
-        <jenkins.core.version>2.204.1</jenkins.core.version>
+        <jenkins.core.version>2.319.3</jenkins.core.version>
     </properties>
 
     <scm>
@@ -65,39 +65,6 @@
         <tag>${scmTag}</tag>
     </scm>
 
-    <build>
-      <plugins>
-          <plugin>
-              <groupId>com.github.spotbugs</groupId>
-              <artifactId>spotbugs-maven-plugin</artifactId>
-              <version>4.0.4</version>
-              <configuration>
-                  <failOnError>true</failOnError>
-                  <xmlOutput>true</xmlOutput>
-                  <spotbugsXmlOutput>false</spotbugsXmlOutput>
-                  <effort>Max</effort>
-                  <threshold>Medium</threshold>
-                  <plugins>
-                      <plugin>
-                          <groupId>com.h3xstream.findsecbugs</groupId>
-                          <artifactId>findsecbugs-plugin</artifactId>
-                          <version>1.10.1</version>
-                      </plugin>
-                  </plugins>
-              </configuration>
-              <executions>
-                  <execution>
-                      <id>spotbugs</id>
-                      <goals>
-                          <goal>check</goal>
-                      </goals>
-                      <phase>verify</phase>
-                  </execution>
-              </executions>
-          </plugin>
-      </plugins>
-    </build>
-
     <dependencies>
 
         <dependency>
@@ -105,12 +72,18 @@
             <artifactId>jenkins-core</artifactId>
             <version>${jenkins.core.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kohsuke.stapler</groupId>
             <artifactId>stapler</artifactId>
             <scope>provided</scope>
-            <version>1.258</version>
+            <version>1669.v95a_4b_919a_b_a_2</version>
             <exclusions>
                 <exclusion> <!-- pick up from Stapler -->
                     <groupId>com.google.code.findbugs</groupId>
