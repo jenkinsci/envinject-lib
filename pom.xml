@@ -59,7 +59,7 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/envinject-lib.git</connection>
+        <connection>scm:git:https://github.com/jenkinsci/envinject-lib.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/envinject-lib.git</developerConnection>
         <url>https://github.com/jenkinsci/envinject-lib</url>
         <tag>${scmTag}</tag>
