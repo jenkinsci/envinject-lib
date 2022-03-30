@@ -38,11 +38,13 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
  
     private transient @CheckForNull Run<?, ?> build;
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     @Override
     public void onAttached(Run<?, ?> run) {
         build = run;
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     @Override
     public void onLoad(Run<?, ?> run) {
         build = run;
@@ -63,6 +65,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
      *             Use {@link #EnvInjectAction(java.util.Map)}.
      */
     @Deprecated
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EnvInjectAction(@NonNull AbstractBuild build, 
             @CheckForNull Map<String, String> envMap) {
         this.build = build;
@@ -74,6 +77,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
      * @param envMap Environment Map 
      * @since 0.25
      */
+    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public EnvInjectAction(@CheckForNull Map<String, String> envMap) {
         this.envMap = envMap;
     }
@@ -82,6 +86,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
         overrideAll(Collections.<String>emptySet(), all);
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public void overrideAll(
             final @CheckForNull Set<String> sensibleVariables, 
             @CheckForNull Map<String, String> all) {
@@ -192,6 +197,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
      * @since TODO
      */
     @CheckForNull
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public Run<?,?> getOwner() {
         return build;
     }
@@ -231,6 +237,7 @@ public class EnvInjectAction implements RunAction2, StaplerProxy {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public @CheckForNull Set<String> getSensibleVariables() {
         return sensibleVariables;
     }
