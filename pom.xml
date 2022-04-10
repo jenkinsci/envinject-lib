@@ -13,7 +13,7 @@
     <version>1.${changelist}</version>
     <packaging>jar</packaging>
     <name>Jenkins EnvInject Library</name>
-    <url>https://plugins.jenkins.io/envinject-api/</url>
+    <url>https://github.com/jenkinsci/envinject-lib/</url>
 
     <licenses>
         <license>
@@ -54,8 +54,7 @@
     <properties>
         <changelist>999999-SNAPSHOT</changelist>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.level>8</java.level>
-        <jenkins.core.version>2.319.3</jenkins.core.version>
+        <jenkins.core.version>2.332.1</jenkins.core.version>
     </properties>
 
     <scm>
@@ -69,7 +68,7 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.319.x</artifactId>
+                <artifactId>bom-2.332.x</artifactId>
                 <version>1246.va_b_50630c1d19</version>
                 <scope>import</scope>
                 <type>pom</type>
