@@ -217,6 +217,7 @@ public class EnvVarsResolver implements Serializable {
         }
     }
 
+    @SuppressFBWarnings("THROWS_METHOD_THROWS_CLAUSE_THROWABLE")
     private static final class SystemEnvVarsGetter extends MasterToSlaveCallable<Map<String, String>, EnvInjectException> {
         public Map<String, String> call() throws EnvInjectException {
             return EnvVars.masterEnvVars;

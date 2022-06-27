@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jenkins-ci</groupId>
         <artifactId>jenkins</artifactId>
-        <version>1.74</version>
+        <version>1.77</version>
     </parent>
 
     <groupId>org.jenkins-ci.lib</groupId>
@@ -54,7 +54,7 @@
     <properties>
         <changelist>999999-SNAPSHOT</changelist>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jenkins.core.version>2.332.1</jenkins.core.version>
+        <jenkins.core.version>2.332.4</jenkins.core.version>
     </properties>
 
     <scm>
