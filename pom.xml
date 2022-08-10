@@ -94,7 +94,7 @@
             <groupId>org.kohsuke.stapler</groupId>
             <artifactId>stapler</artifactId>
             <scope>provided</scope>
-            <version>1711.v5b_1b_03f0fcf2</version>
+            <version>1728.v56ec83576669</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
