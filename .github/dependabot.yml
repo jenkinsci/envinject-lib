@@ -3,13 +3,11 @@ updates:
   - package-ecosystem: maven
     directory: "/"
     schedule:
-      interval: weekly
+      interval: monthly
     ignore:
       - dependency-name: "org.jenkins-ci.main:jenkins-core"
     target-branch: master
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: daily
-    commit-message:
-      prefix: "build: "
+      interval: monthly
